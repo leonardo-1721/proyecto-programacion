@@ -1,153 +1,249 @@
 {% extends 'base.html' %}
 
-{% block title %}Catálogo de Adopción | Huellitas del Valle{% endblock %}
+{% block title %}Catálogo de Mascotas | Huellitas del Valle{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Caja de búsqueda del mockup */
+    .search-pill-wrapper {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-soft);
+        border-radius: 50px;
+        padding: 0.35rem 0.45rem 0.35rem 1.4rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .search-pill-wrapper input {
+        border: none;
+        background: transparent;
+        outline: none;
+        box-shadow: none;
+        font-size: 0.95rem;
+        color: var(--text-main);
+    }
+
+    .search-pill-wrapper input::placeholder {
+        color: #9c978f;
+    }
+
+    /* Contenedor de filtros redondeado del mockup */
+    .mockup-filters-container {
+        background-color: var(--bg-subtle);
+        border: 1px solid var(--border-soft);
+        border-radius: 18px;
+        padding: 1.15rem 1.4rem;
+        margin-top: 1.75rem;
+        margin-bottom: 2.25rem;
+    }
+
+    .mockup-select {
+        background-color: #ffffff;
+        border: 1px solid var(--border-soft);
+        border-radius: 50px;
+        padding: 0.5rem 1.1rem;
+        font-size: 0.88rem;
+        color: #4a4742;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .mockup-select:focus {
+        border-color: #9c978f;
+        box-shadow: none;
+    }
+
+    .filter-label-header {
+        font-size: 0.76rem;
+        letter-spacing: 0.6px;
+        font-weight: 700;
+        color: #7b766e;
+        text-transform: uppercase;
+        margin-bottom: 0.65rem;
+    }
+
+    /* Paginación minimalista */
+    .mockup-pagination a {
+        color: #55524c;
+        text-decoration: none;
+        padding: 0.35rem 0.75rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border-radius: 6px;
+        transition: all 0.15s ease;
+    }
+
+    .mockup-pagination a.active,
+    .mockup-pagination a:hover {
+        background-color: var(--bg-subtle);
+        color: #000;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- Header del Catálogo -->
-    <div class="text-center mb-5">
-        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-semibold mb-2">
-            Amigos Peludos
-        </span>
-        <h1 class="fw-bold mb-2">Catálogo de Adopción</h1>
-        <p class="text-muted mx-auto" style="max-width: 600px;">
-            Filtra por especie o busca directamente por nombre o características para encontrar a tu compañero ideal.
+<div class="container py-4 py-md-5">
+
+    <!-- Encabezado fiel al Wireframe RF5:
+         Encuentra a tu nuevo mejor amigo
+         Dale un hogar a quien más lo necesita -->
+    <div class="text-center mb-4">
+        <h1 class="fw-bold mb-1" style="font-size: 2.2rem; letter-spacing: -0.5px;">
+            Encuentra a tu nuevo mejor amigo
+        </h1>
+        <p class="text-muted" style="font-size: 1.05rem;">
+            Dale un hogar a quien más lo necesita
         </p>
     </div>
 
-    <!-- Barra de Filtros y Búsqueda -->
-    <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-5 bg-white">
-        <form action="{% url 'catalogo' %}" method="get" class="row g-3 align-items-center">
-            
-            <!-- Botones de Filtro por Especie -->
-            <div class="col-12 col-lg-6">
-                <label class="form-label small text-muted fw-bold text-uppercase mb-2">Filtrar por Especie</label>
-                <div class="btn-group w-100" role="group" aria-label="Filtro de especie">
-                    <a href="{% url 'catalogo' %}{% if query %}?q={{ query }}{% endif %}" 
-                       class="btn btn-sm {% if not especie_actual or especie_actual|lower == 'todos' %}btn-success text-white fw-bold{% else %}btn-outline-secondary{% endif %}">
-                        <i class="bi bi-grid-3x3-gap-fill me-1"></i> Todos
-                    </a>
-                    <a href="{% url 'catalogo' %}?especie=Perro{% if query %}&q={{ query }}{% endif %}" 
-                       class="btn btn-sm {% if especie_actual|lower == 'perro' %}btn-success text-white fw-bold{% else %}btn-outline-secondary{% endif %}">
-                        🐶 Perros
-                    </a>
-                    <a href="{% url 'catalogo' %}?especie=Gato{% if query %}&q={{ query }}{% endif %}" 
-                       class="btn btn-sm {% if especie_actual|lower == 'gato' %}btn-success text-white fw-bold{% else %}btn-outline-secondary{% endif %}">
-                        🐱 Gatos
-                    </a>
-                </div>
-                <!-- Conserva especie si el usuario busca por texto -->
-                {% if especie_actual %}
-                    <input type="hidden" name="especie" value="{{ especie_actual }}">
-                {% endif %}
-            </div>
+    <!-- Barra de búsqueda con botón "Buscar" oscuro -->
+    <form action="{% url 'catalogo' %}" method="get" class="mb-3">
+        <!-- Mantener filtros actuales si se busca por texto -->
+        {% if especie_actual %}<input type="hidden" name="especie" value="{{ especie_actual }}">{% endif %}
+        {% if sexo_actual %}<input type="hidden" name="sexo" value="{{ sexo_actual }}">{% endif %}
+        {% if tamano_actual %}<input type="hidden" name="tamano" value="{{ tamano_actual }}">{% endif %}
 
-            <!-- Búsqueda por Texto -->
-            <div class="col-12 col-lg-6">
-                <label class="form-label small text-muted fw-bold text-uppercase mb-2">Buscar por nombre o raza</label>
-                <div class="input-group">
-                    <input 
-                        type="text" 
-                        name="q" 
-                        value="{{ query }}" 
-                        class="form-control" 
-                        placeholder="Ej. Luna, Mestizo, cachorro..." 
-                        aria-label="Buscar mascota"
-                    >
-                    <button class="btn btn-success fw-semibold px-4" type="submit">
-                        <i class="bi bi-search me-1"></i> Buscar
+        <div class="search-pill-wrapper d-flex align-items-center">
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ query }}" 
+                class="form-control" 
+                placeholder="Buscar por nombre o palabra clave..." 
+                aria-label="Buscar mascota"
+            >
+            <button type="submit" class="btn btn-mockup-dark px-4 py-2 ms-2">
+                Buscar
+            </button>
+        </div>
+    </form>
+
+    <!-- Barra de Filtros del Mockup: FILTROS [Especie v] [Edad v] [Tamaño v] [Sexo v] [Aplicar Filtros] [Limpiar] -->
+    <div class="mockup-filters-container">
+        <form action="{% url 'catalogo' %}" method="get">
+            {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+            
+            <div class="filter-label-header">Filtros</div>
+            
+            <div class="row g-2 align-items-center">
+                <!-- Especie -->
+                <div class="col-6 col-md-3">
+                    <select name="especie" class="form-select mockup-select" aria-label="Especie">
+                        <option value="" {% if not especie_actual %}selected{% endif %}>Especie ▾</option>
+                        <option value="Perro" {% if especie_actual == 'Perro' %}selected{% endif %}>Perro</option>
+                        <option value="Gato" {% if especie_actual == 'Gato' %}selected{% endif %}>Gato</option>
+                    </select>
+                </div>
+
+                <!-- Tamaño -->
+                <div class="col-6 col-md-2">
+                    <select name="tamano" class="form-select mockup-select" aria-label="Tamaño">
+                        <option value="" {% if not tamano_actual %}selected{% endif %}>Tamaño ▾</option>
+                        <option value="Pequeño" {% if tamano_actual == 'Pequeño' %}selected{% endif %}>Pequeño</option>
+                        <option value="Mediano" {% if tamano_actual == 'Mediano' %}selected{% endif %}>Mediano</option>
+                        <option value="Grande" {% if tamano_actual == 'Grande' %}selected{% endif %}>Grande</option>
+                    </select>
+                </div>
+
+                <!-- Sexo -->
+                <div class="col-6 col-md-2">
+                    <select name="sexo" class="form-select mockup-select" aria-label="Sexo">
+                        <option value="" {% if not sexo_actual %}selected{% endif %}>Sexo ▾</option>
+                        <option value="Hembra" {% if sexo_actual == 'Hembra' %}selected{% endif %}>Hembra</option>
+                        <option value="Macho" {% if sexo_actual == 'Macho' %}selected{% endif %}>Macho</option>
+                    </select>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="col-6 col-md-3">
+                    <button type="submit" class="btn btn-mockup-dark w-100 py-2">
+                        Aplicar Filtros
                     </button>
-                    {% if query or especie_actual %}
-                    <a href="{% url 'catalogo' %}" class="btn btn-outline-danger" title="Limpiar filtros">
-                        <i class="bi bi-x-lg"></i>
+                </div>
+
+                <div class="col-12 col-md-2">
+                    <a href="{% url 'catalogo' %}" class="btn btn-mockup-light w-100 py-2 text-center">
+                        Limpiar
                     </a>
-                    {% endif %}
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- Indicador de Resultados Activos -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="fw-bold mb-0 text-dark">
-            Mascotas Disponibles
-            <span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill ms-2 font-monospace">
-                {{ mascotas|length }}
-            </span>
-        </h5>
-        {% if query or especie_actual %}
-        <div class="small text-muted">
-            Filtros: 
-            {% if especie_actual %}<span class="badge bg-success me-1">{{ especie_actual }}</span>{% endif %}
-            {% if query %}<span class="badge bg-info text-dark">"{{ query }}"</span>{% endif %}
-            <a href="{% url 'catalogo' %}" class="text-danger ms-2 text-decoration-none">
-                <i class="bi bi-trash3"></i> Restablecer
-            </a>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- Grilla de Mascotas -->
+    <!-- Grilla de Mascotas (3 columnas tal como en el Mockup) -->
     {% if mascotas %}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for mascota in mascotas %}
             <div class="col">
-                <div class="card h-100 pet-card">
-                    <div class="position-relative">
-                        <img src="{{ mascota.foto_url }}" class="pet-card-img" alt="{{ mascota.nombre }}">
-                        <span class="position-absolute top-0 start-0 m-3 badge {% if mascota.especie == 'Perro' %}bg-primary{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-2 shadow-sm">
-                            {% if mascota.especie == 'Perro' %}🐶{% else %}🐱{% endif %} {{ mascota.especie }}
-                        </span>
-                        {% if mascota.vacunado %}
-                        <span class="position-absolute top-0 end-0 m-3 badge bg-success rounded-pill px-2 py-1 shadow-sm small">
-                            <i class="bi bi-patch-check-fill"></i> Vacunado
-                        </span>
-                        {% else %}
-                        <span class="position-absolute top-0 end-0 m-3 badge bg-warning text-dark rounded-pill px-2 py-1 shadow-sm small">
-                            <i class="bi bi-clock-history"></i> Vacuna pendiente
-                        </span>
-                        {% endif %}
+                <div class="pet-mockup-card h-100">
+                    
+                    <!-- Imagen de la Mascota -->
+                    <div class="pet-img-wrap">
+                        <img src="{{ mascota.foto_url }}" alt="{{ mascota.nombre }}" loading="lazy">
                     </div>
 
-                    <div class="card-body d-flex flex-column p-4">
-                        <div class="d-flex justify-content-between align-items-baseline mb-2">
-                            <h4 class="card-title fw-bold mb-0 text-dark">{{ mascota.nombre }}</h4>
-                            <span class="badge bg-light text-muted border">{{ mascota.edad }}</span>
+                    <!-- Información de la Ficha -->
+                    <div class="pet-card-info">
+                        
+                        <!-- Badge "Disponible" en verde menta suave (del Mockup) -->
+                        <div class="mb-2">
+                            <span class="badge-disponible">
+                                <i class="bi bi-circle-fill" style="font-size: 0.45rem;"></i> {{ mascota.estado }}
+                            </span>
                         </div>
+
+                        <!-- Nombre -->
+                        <h4 class="fw-bold mb-1 text-dark" style="font-size: 1.25rem;">
+                            {{ mascota.nombre }}
+                        </h4>
+
+                        <!-- Meta: Especie · Edad · Tamaño -->
                         <p class="text-muted small mb-2">
-                            <i class="bi bi-tag text-success me-1"></i> {{ mascota.raza }}
+                            {{ mascota.especie }} · {{ mascota.edad }} · {{ mascota.tamano }}
                         </p>
-                        <p class="text-muted small mb-3">
-                            <i class="bi bi-speedometer2 text-success me-1"></i> Peso aprox: <strong>{{ mascota.peso }}</strong>
+
+                        <!-- Breve rasgo de personalidad -->
+                        <p class="text-secondary small mb-4 flex-grow-1" style="line-height: 1.45;">
+                            {{ mascota.descripcion|truncatewords:14 }}
                         </p>
-                        <p class="card-text text-secondary mb-4 flex-grow-1" style="font-size: 0.95rem;">
-                            {{ mascota.descripcion|truncatewords:16 }}
-                        </p>
-                        <a href="{% url 'detalle_mascota' mascota.id %}" class="btn btn-success w-100 fw-semibold rounded-pill py-2 shadow-sm">
-                            Conoce a {{ mascota.nombre }} <i class="bi bi-arrow-right ms-1"></i>
+
+                        <!-- Botón "Ver Ficha de Detalle" (Mockup exacto) -->
+                        <a href="{% url 'detalle_mascota' mascota.id %}" class="btn btn-mockup-dark w-100 py-2">
+                            Ver Ficha de Detalle
                         </a>
+
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
+
+        <!-- Paginación estilo wireframe: < 1 2 3 4 > -->
+        <div class="d-flex justify-content-center align-items-center gap-2 mt-5 pt-3 mockup-pagination">
+            <a href="#" class="text-muted"><i class="bi bi-chevron-left"></i></a>
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#" class="text-muted"><i class="bi bi-chevron-right"></i></a>
+        </div>
+
     {% else %}
-        <!-- Estado Vacío (Empty State) -->
-        <div class="card border-0 shadow-sm rounded-4 text-center py-5 px-3 bg-white my-4">
-            <div class="card-body py-4">
-                <div class="display-3 text-muted mb-3 opacity-50">
-                    <i class="bi bi-search-heart"></i>
-                </div>
-                <h3 class="fw-bold text-dark mb-2">No se encontraron mascotas</h3>
-                <p class="text-muted mx-auto mb-4" style="max-width: 480px;">
-                    No encontramos ninguna mascota que coincida con tus criterios de búsqueda. Intenta probar con otros términos o restablece los filtros.
-                </p>
-                <a href="{% url 'catalogo' %}" class="btn btn-success rounded-pill px-4 py-2 fw-semibold">
-                    <i class="bi bi-arrow-counterclockwise me-1"></i> Ver todas las mascotas
-                </a>
+        <!-- Estado Vacío Suave -->
+        <div class="text-center py-5 my-4 bg-white rounded-4 border p-5">
+            <div class="mb-3 text-muted">
+                <i class="bi bi-search" style="font-size: 2.5rem; opacity: 0.4;"></i>
             </div>
+            <h4 class="fw-bold text-dark mb-2">No se encontraron mascotas</h4>
+            <p class="text-muted small mb-4">
+                No hay animalitos que coincidan con los criterios seleccionados. Prueba cambiando los filtros.
+            </p>
+            <a href="{% url 'catalogo' %}" class="btn btn-mockup-dark px-4 py-2">
+                Mostrar todas las mascotas
+            </a>
         </div>
     {% endif %}
+
 </div>
 {% endblock %}
-

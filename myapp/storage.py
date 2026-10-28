@@ -2,10 +2,12 @@ import csv
 from pathlib import Path
 from django.conf import settings
 
-# Ruta dinámica al archivo data/mascotas.txt
 DATA_FILE = settings.BASE_DIR / 'data' / 'mascotas.txt'
 
-CAMPOS = ['id', 'nombre', 'especie', 'raza', 'edad', 'peso', 'foto_url', 'descripcion', 'vacunado']
+CAMPOS = [
+    'id', 'nombre', 'especie', 'raza', 'edad', 'sexo',
+    'tamano', 'peso', 'foto_url', 'descripcion', 'vacunado', 'estado'
+]
 
 
 def _asegurar_archivo():
@@ -25,10 +27,13 @@ def _parsear_fila(fila):
         'especie': fila.get('especie', '').strip(),
         'raza': fila.get('raza', '').strip(),
         'edad': fila.get('edad', '').strip(),
+        'sexo': fila.get('sexo', '').strip() or 'No especificado',
+        'tamano': fila.get('tamano', '').strip() or 'Mediano',
         'peso': fila.get('peso', '').strip(),
         'foto_url': fila.get('foto_url', '').strip(),
         'descripcion': fila.get('descripcion', '').strip(),
-        'vacunado': str(fila.get('vacunado', '')).strip().lower() in ('true', '1', 'si', 'sí')
+        'vacunado': str(fila.get('vacunado', '')).strip().lower() in ('true', '1', 'si', 'sí'),
+        'estado': fila.get('estado', 'Disponible').strip() or 'Disponible'
     }
 
 
@@ -71,10 +76,12 @@ def guardar_nueva_mascota(datos):
             'especie': datos.get('especie', ''),
             'raza': datos.get('raza', ''),
             'edad': datos.get('edad', ''),
+            'sexo': datos.get('sexo', 'Macho'),
+            'tamano': datos.get('tamano', 'Mediano'),
             'peso': datos.get('peso', ''),
             'foto_url': datos.get('foto_url', ''),
             'descripcion': datos.get('descripcion', ''),
-            'vacunado': bool(datos.get('vacunado', False))
+            'vacunado': bool(datos.get('vacunado', False)),
+            'estado': datos.get('estado', 'Disponible')
         })
     return nuevo_id
-

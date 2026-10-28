@@ -3,170 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Huellitas del Valle - Adopción de Mascotas{% endblock %}</title>
+    <title>{% block title %}Huellitas del Valle{% endblock %}</title>
+
+    <!-- Google Fonts: Inter / Plus Jakarta Sans para acabado limpio y moderno -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
+        /* ================= PALETA DE COLORES SUAVE (MOCKUP ACCURATE) ================= */
         :root {
-            --primary-green: #198754;
-            --primary-green-dark: #146c43;
-            --soft-green-bg: #e8f5e9;
+            --bg-canvas: #fcfbf8;           /* Fondo cálido y suave */
+            --bg-surface: #ffffff;          /* Blanco tarjetas */
+            --bg-subtle: #f4f3ef;           /* Gris/beige tenue de cajas y filtros */
+            
+            --dark-btn: #383632;            /* Antracita / Grafito de los botones del mockup */
+            --dark-btn-hover: #23221f;
+            
+            --mint-badge-bg: #cbf3e3;       /* Verde menta suave "Disponible" */
+            --mint-badge-text: #0f6244;
+            
+            --yellow-cta: #fae49d;          /* Amarillo pastel suave para botón de adopción */
+            --yellow-cta-hover: #f7da7f;
+            --yellow-cta-text: #594200;
+            
+            --border-soft: #eae7df;
+            --text-main: #2b2927;
+            --text-muted: #706c66;
         }
 
         body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            background-color: #f8fafc;
-            color: #334155;
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .main-content {
+        .main-wrapper {
             flex: 1 0 auto;
         }
 
-        .navbar-custom {
-            background-color: var(--primary-green) !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* ===== NAVBAR SUPERIOR EXACTA AL MOCKUP ===== */
+        .mockup-navbar {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-soft);
+            padding: 0.85rem 0;
         }
 
-        .navbar-custom .navbar-brand {
+        .navbar-brand-text {
+            font-size: 1.15rem;
             font-weight: 700;
-            font-size: 1.4rem;
-            color: #ffffff;
+            color: var(--text-main);
+            text-decoration: none;
             letter-spacing: -0.3px;
         }
 
-        .navbar-custom .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
+        .nav-separator {
+            color: #ccc8be;
+            margin: 0 0.65rem;
+            font-weight: 300;
+        }
+
+        .mockup-nav-link {
+            color: #55524c;
+            text-decoration: none;
+            font-size: 0.92rem;
             font-weight: 500;
-            padding: 0.5rem 1rem;
+            padding: 0.25rem 0.5rem;
+            transition: color 0.15s ease;
+        }
+
+        .mockup-nav-link:hover {
+            color: var(--dark-btn);
+        }
+
+        .btn-admin-pill {
+            color: var(--text-main);
+            background-color: var(--bg-subtle);
+            border: 1px solid var(--border-soft);
+            border-radius: 50px;
+            padding: 0.35rem 0.95rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
             transition: all 0.2s ease;
-            border-radius: 6px;
         }
 
-        .navbar-custom .nav-link:hover,
-        .navbar-custom .nav-link.active {
-            color: #ffffff !important;
-            background-color: rgba(255, 255, 255, 0.15);
+        .btn-admin-pill:hover {
+            background-color: #eae7e0;
+            color: #000;
         }
 
-        .pet-card {
+        /* ===== COMPONENTES GENERALES DEL MOCKUP ===== */
+        .btn-mockup-dark {
+            background-color: var(--dark-btn);
+            color: #ffffff;
             border: none;
-            border-radius: 14px;
+            border-radius: 50px;
+            padding: 0.6rem 1.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-mockup-dark:hover {
+            background-color: var(--dark-btn-hover);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .btn-mockup-light {
+            background-color: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border-soft);
+            border-radius: 50px;
+            padding: 0.55rem 1.3rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mockup-light:hover {
+            background-color: var(--bg-subtle);
+            color: var(--dark-btn);
+        }
+
+        .badge-disponible {
+            background-color: var(--mint-badge-bg);
+            color: var(--mint-badge-text);
+            font-weight: 600;
+            font-size: 0.78rem;
+            border-radius: 50px;
+            padding: 0.35rem 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ===== TARJETA DE MASCOTA SEGÚN WIREFRAME ===== */
+        .pet-mockup-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-soft);
+            border-radius: 18px;
             overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
         }
 
-        .pet-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        .pet-mockup-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            transform: translateY(-3px);
         }
 
-        .pet-card-img {
-            height: 230px;
-            object-fit: cover;
+        .pet-img-wrap {
+            height: 220px;
+            background-color: #e6e4dc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pet-img-wrap img {
             width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        footer {
-            background-color: #1e293b;
-            color: #cbd5e1;
+        .pet-card-info {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
-        footer a {
-            color: #94a3b8;
+        /* ===== FOOTER SUAVE Y MINIMALISTA ===== */
+        footer.mockup-footer {
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border-soft);
+            padding: 2.5rem 0 1.8rem;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        footer.mockup-footer a {
+            color: var(--text-muted);
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
-        footer a:hover {
-            color: #ffffff;
+        footer.mockup-footer a:hover {
+            color: var(--dark-btn);
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <!-- Navbar Superior -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
-                <i class="bi bi-heart-pulse-fill fs-4 text-warning"></i>
+    <!-- NAVBAR SUPERIOR (Fiel a: Huellitas del Valle | Inicio · Catálogo · Cómo Adoptar · Contacto | [Acceso Admin]) -->
+    <header class="mockup-navbar">
+        <div class="container d-flex flex-wrap align-items-center justify-content-between gap-3">
+            
+            <!-- Logo / Brand -->
+            <a href="{% url 'home' %}" class="navbar-brand-text d-flex align-items-center gap-2">
+                <i class="bi bi-heart-pulse text-dark fs-5"></i>
                 <span>Huellitas del Valle</span>
             </a>
-            
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
 
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">
-                            <i class="bi bi-house-door-fill me-1"></i> Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'catalogo' %}">
-                            <i class="bi bi-grid-fill me-1"></i> Catálogo
-                        </a>
-                    </li>
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <a class="btn btn-outline-light btn-sm px-3 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm" href="/admin/">
-                            <i class="bi bi-shield-lock-fill"></i> Panel Admin
-                        </a>
-                    </li>
-                </ul>
+            <!-- Menú Central -->
+            <nav class="d-none d-md-flex align-items-center">
+                <a href="{% url 'home' %}" class="mockup-nav-link">Inicio</a>
+                <span class="nav-separator">·</span>
+                <a href="{% url 'catalogo' %}" class="mockup-nav-link">Catálogo</a>
+                <span class="nav-separator">·</span>
+                <a href="{% url 'home' %}#como-adoptar" class="mockup-nav-link">Cómo Adoptar</a>
+                <span class="nav-separator">·</span>
+                <a href="{% url 'home' %}#contacto" class="mockup-nav-link">Contacto</a>
+            </nav>
+
+            <!-- Acceso Admin -->
+            <div class="d-flex align-items-center gap-2">
+                <a href="/admin/" class="btn-admin-pill d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-person-fill-lock"></i> [ Acceso Admin ]
+                </a>
             </div>
-        </div>
-    </nav>
 
-    <!-- Contenido Principal -->
-    <main class="main-content">
+        </div>
+    </header>
+
+    <!-- CONTENIDO DE CADA VISTA -->
+    <main class="main-wrapper">
         {% block content %}
         {% endblock %}
     </main>
 
-    <!-- Footer Responsivo -->
-    <footer class="pt-5 pb-4 mt-5">
-        <div class="container">
-            <div class="row gy-4 align-items-center justify-content-between">
-                <div class="col-12 col-md-6 text-center text-md-start">
-                    <h5 class="text-white fw-bold d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
-                        <i class="bi bi-heart-pulse-fill text-warning"></i> Huellitas del Valle
-                    </h5>
-                    <p class="small text-secondary mb-0">
-                        Conectando corazones con patitas. Promovemos la adopción responsable y el bienestar animal en nuestra comunidad.
+    <!-- FOOTER LIMPIO -->
+    <footer class="mockup-footer mt-5">
+        <div class="container text-center text-md-start">
+            <div class="row gy-3 align-items-center justify-content-between">
+                <div class="col-12 col-md-6">
+                    <strong class="text-dark">Huellitas del Valle</strong> — Sistema Centralizado de Adopción de Mascotas
+                    <p class="mb-0 small text-muted mt-1">
+                        Proyecto formativo de Ingeniería · Persistencia en archivos de texto plano (.txt)
                     </p>
                 </div>
-                <div class="col-12 col-md-6 text-center text-md-end">
-                    <div class="d-flex justify-content-center justify-content-md-end gap-3 mb-2">
-                        <a href="{% url 'home' %}" class="small">Inicio</a>
-                        <span class="text-muted">•</span>
-                        <a href="{% url 'catalogo' %}" class="small">Catálogo de Adopción</a>
-                        <span class="text-muted">•</span>
-                        <a href="/admin/" class="small">Acceso Administrativo</a>
+                <div class="col-12 col-md-6 text-md-end">
+                    <div class="d-flex justify-content-center justify-content-md-end gap-3 small mb-1">
+                        <a href="{% url 'home' %}">Inicio</a>
+                        <span>·</span>
+                        <a href="{% url 'catalogo' %}">Catálogo</a>
+                        <span>·</span>
+                        <a href="/admin/">Panel Administrativo</a>
                     </div>
-                    <p class="small text-secondary mb-0">
-                        &copy; 2026 Huellitas del Valle. Desarrollado con Django & Bootstrap 5.
-                    </p>
+                    <span class="small">&copy; 2026 Huellitas del Valle · Cali, Colombia</span>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-

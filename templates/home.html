@@ -4,185 +4,219 @@
 
 {% block extra_css %}
 <style>
-    .hero-banner {
-        background: linear-gradient(135deg, rgba(20, 108, 67, 0.95), rgba(25, 135, 84, 0.85)),
-                    url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-        color: #ffffff;
-        padding: 5rem 1rem;
-        position: relative;
+    /* Hero suave y elegante */
+    .mockup-hero-section {
+        padding: 4.5rem 1rem 3.5rem;
+        background: radial-gradient(circle at 50% 30%, #ffffff 0%, var(--bg-canvas) 85%);
+        border-bottom: 1px solid var(--border-soft);
     }
 
     .hero-search-box {
-        max-width: 650px;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-soft);
+        border-radius: 50px;
+        padding: 0.4rem 0.5rem 0.4rem 1.4rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        max-width: 680px;
         margin: 0 auto;
-        background: #ffffff;
-        padding: 0.5rem;
-        border-radius: 50px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
 
-    .hero-search-box .form-control {
+    .hero-search-box input {
         border: none;
-        border-radius: 50px;
-        padding-left: 1.5rem;
+        outline: none;
         box-shadow: none;
+        font-size: 0.95rem;
     }
 
-    .hero-search-box .btn-search {
-        border-radius: 50px;
-        padding: 0.6rem 1.8rem;
-        font-weight: 600;
-        background-color: #198754;
-        border: none;
-        color: #ffffff;
-        transition: all 0.2s ease;
+    .info-card-step {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-soft);
+        border-radius: 18px;
+        padding: 1.8rem 1.4rem;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .hero-search-box .btn-search:hover {
-        background-color: #146c43;
+    .info-card-step:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.03);
     }
 
-    .feature-badge {
-        background-color: rgba(255, 255, 255, 0.2);
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(4px);
+    .step-number {
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        border-radius: 50%;
+        background-color: var(--bg-subtle);
+        color: var(--dark-btn);
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin: 0 auto 1rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-banner text-center">
-    <div class="container py-3">
-        <span class="badge feature-badge rounded-pill px-3 py-2 mb-3 fw-medium">
-            <i class="bi bi-stars text-warning me-1"></i> Adopciones Responsables en el Valle
-        </span>
-        <h1 class="display-4 fw-bold mb-3">Encuentra a tu nuevo mejor amigo</h1>
-        <p class="lead mb-4 mx-auto text-light opacity-90" style="max-width: 700px;">
-            Miles de peludos están esperando un hogar lleno de amor y comprensión. Descubre las mascotas que esperan por ti hoy.
+
+<!-- HERO PRINCIPAL FIEL AL ESPÍRITU DEL MOCKUP -->
+<section class="mockup-hero-section text-center">
+    <div class="container">
+        
+        <div class="d-inline-flex align-items-center gap-2 mb-3 px-3 py-1 rounded-pill small" style="background-color: var(--bg-subtle); border: 1px solid var(--border-soft); color: #635f58;">
+            <i class="bi bi-shield-check text-success"></i> Sistema Centralizado de Adopción
+        </div>
+
+        <h1 class="display-5 fw-bold mb-2 text-dark" style="letter-spacing: -0.5px;">
+            Encuentra a tu nuevo mejor amigo
+        </h1>
+        <p class="text-muted lead mb-4 mx-auto" style="max-width: 620px; font-size: 1.15rem;">
+            Dale un hogar a quien más lo necesita. Consulta el catálogo y encuentra el compañero perfecto para tu vida.
         </p>
 
-        <!-- Barra de búsqueda integrada -->
-        <form action="{% url 'catalogo' %}" method="get" class="hero-search-box d-flex align-items-center">
-            <i class="bi bi-search text-muted ms-3 fs-5"></i>
+        <!-- Buscador integrado -->
+        <form action="{% url 'catalogo' %}" method="get" class="hero-search-box d-flex align-items-center mb-4">
+            <i class="bi bi-search text-muted me-2"></i>
             <input 
                 type="text" 
                 name="q" 
                 class="form-control" 
-                placeholder="Busca por nombre, raza o especie (ej. Golden, Gato, Luna)..." 
+                placeholder="Buscar por nombre, raza o especie..." 
                 aria-label="Buscar mascota"
             >
-            <button type="submit" class="btn btn-search text-nowrap">
-                Buscar Mascota
+            <button type="submit" class="btn btn-mockup-dark px-4 py-2 ms-2">
+                Buscar
             </button>
         </form>
 
-        <!-- Accesos directos rápidos -->
-        <div class="mt-4 d-flex justify-content-center gap-2 flex-wrap">
-            <a href="{% url 'catalogo' %}?especie=Perro" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                <i class="bi bi-slash-circle d-none"></i>🐶 Perros
+        <!-- Accesos rápidos a especies -->
+        <div class="d-flex justify-content-center gap-2 flex-wrap">
+            <a href="{% url 'catalogo' %}?especie=Perro" class="btn btn-mockup-light btn-sm">
+                🐶 Perros
             </a>
-            <a href="{% url 'catalogo' %}?especie=Gato" class="btn btn-sm btn-outline-light rounded-pill px-3">
+            <a href="{% url 'catalogo' %}?especie=Gato" class="btn btn-mockup-light btn-sm">
                 🐱 Gatos
             </a>
-            <a href="{% url 'catalogo' %}" class="btn btn-sm btn-light text-success fw-bold rounded-pill px-3">
-                Ver Todos
+            <a href="{% url 'catalogo' %}" class="btn btn-mockup-dark btn-sm">
+                Ver Todo el Catálogo
             </a>
         </div>
+
     </div>
 </section>
 
-<!-- Sección de Mascotas Destacadas -->
+<!-- SECCIÓN DE MASCOTAS DESTACADAS -->
 <section class="py-5">
     <div class="container">
+        
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
             <div>
-                <h6 class="text-success text-uppercase fw-bold letter-spacing-1 mb-1">
-                    <i class="bi bi-heart-fill text-danger me-1"></i> Rescatados Especiales
-                </h6>
-                <h2 class="fw-bold mb-0">Mascotas Destacadas</h2>
+                <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.6px; font-size: 0.78rem;">
+                    Adopciones Disponibles
+                </span>
+                <h2 class="fw-bold text-dark mb-0" style="letter-spacing: -0.3px;">
+                    Mascotas en Adopción
+                </h2>
             </div>
-            <a href="{% url 'catalogo' %}" class="btn btn-outline-success fw-semibold mt-3 mt-md-0 rounded-pill px-4">
-                Ver Catálogo Completo <i class="bi bi-arrow-right ms-1"></i>
+            <a href="{% url 'catalogo' %}" class="btn btn-mockup-light btn-sm mt-3 mt-md-0 px-3">
+                Explorar catálogo completo →
             </a>
         </div>
 
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for mascota in mascotas_destacadas %}
             <div class="col">
-                <div class="card h-100 pet-card">
-                    <div class="position-relative">
-                        <img src="{{ mascota.foto_url }}" class="pet-card-img" alt="{{ mascota.nombre }}">
-                        <span class="position-absolute top-0 start-0 m-3 badge {% if mascota.especie == 'Perro' %}bg-primary{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-2 shadow-sm">
-                            {% if mascota.especie == 'Perro' %}🐶{% else %}🐱{% endif %} {{ mascota.especie }}
-                        </span>
-                        {% if mascota.vacunado %}
-                        <span class="position-absolute top-0 end-0 m-3 badge bg-success rounded-pill px-2 py-1 shadow-sm small">
-                            <i class="bi bi-patch-check-fill"></i> Vacunado
-                        </span>
-                        {% endif %}
+                <div class="pet-mockup-card h-100">
+                    
+                    <div class="pet-img-wrap">
+                        <img src="{{ mascota.foto_url }}" alt="{{ mascota.nombre }}" loading="lazy">
                     </div>
 
-                    <div class="card-body d-flex flex-column p-4">
-                        <div class="d-flex justify-content-between align-items-baseline mb-2">
-                            <h4 class="card-title fw-bold mb-0 text-dark">{{ mascota.nombre }}</h4>
-                            <span class="text-muted small fw-medium">{{ mascota.edad }}</span>
+                    <div class="pet-card-info">
+                        <div class="mb-2">
+                            <span class="badge-disponible">
+                                <i class="bi bi-circle-fill" style="font-size: 0.45rem;"></i> {{ mascota.estado }}
+                            </span>
                         </div>
+
+                        <h4 class="fw-bold mb-1 text-dark" style="font-size: 1.25rem;">
+                            {{ mascota.nombre }}
+                        </h4>
+
                         <p class="text-muted small mb-2">
-                            <i class="bi bi-tag-fill text-success me-1"></i> {{ mascota.raza }}
+                            {{ mascota.especie }} · {{ mascota.edad }} · {{ mascota.tamano }}
                         </p>
-                        <p class="card-text text-secondary mb-4 flex-grow-1" style="font-size: 0.95rem;">
-                            {{ mascota.descripcion|truncatewords:16 }}
+
+                        <p class="text-secondary small mb-4 flex-grow-1" style="line-height: 1.45;">
+                            {{ mascota.descripcion|truncatewords:14 }}
                         </p>
-                        <a href="{% url 'detalle_mascota' mascota.id %}" class="btn btn-outline-success w-100 fw-semibold rounded-pill py-2">
-                            Conoce a {{ mascota.nombre }} <i class="bi bi-arrow-up-right ms-1"></i>
+
+                        <a href="{% url 'detalle_mascota' mascota.id %}" class="btn btn-mockup-dark w-100 py-2">
+                            Ver Ficha de Detalle
                         </a>
                     </div>
+
                 </div>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <p class="text-muted">No hay mascotas destacadas en este momento.</p>
             </div>
             {% endfor %}
         </div>
+
     </div>
 </section>
 
-<!-- Banner Informativo -->
-<section class="py-5 bg-white border-top border-bottom">
-    <div class="container">
-        <div class="row g-4 text-center">
+<!-- SECCIÓN: CÓMO ADOPTAR (Enlace del navbar) -->
+<section id="como-adoptar" class="py-5" style="background-color: var(--bg-subtle); border-top: 1px solid var(--border-soft);">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark mb-2">¿Cómo es el proceso de adopción?</h2>
+            <p class="text-muted mx-auto" style="max-width: 580px;">
+                Fácil, transparente y enfocado en el bienestar de la mascota.
+            </p>
+        </div>
+
+        <div class="row g-4">
             <div class="col-md-4">
-                <div class="p-3">
-                    <div class="display-6 text-success mb-2">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <h5 class="fw-bold">Adopción Segura</h5>
-                    <p class="text-muted small mb-0">Todas nuestras mascotas cuentan con revisión veterinaria y esquema de vacunas al día.</p>
+                <div class="info-card-step">
+                    <div class="step-number">1</div>
+                    <h5 class="fw-bold text-dark mb-2">Explora y Elige</h5>
+                    <p class="text-muted small mb-0">
+                        Navega nuestro catálogo filtrando por especie, tamaño o edad para encontrar a tu mascota ideal.
+                    </p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="p-3">
-                    <div class="display-6 text-success mb-2">
-                        <i class="bi bi-house-heart"></i>
-                    </div>
-                    <h5 class="fw-bold">Hogares Verificados</h5>
-                    <p class="text-muted small mb-0">Acompañamos el proceso de adaptación para garantizar un vínculo feliz y duradero.</p>
+                <div class="info-card-step">
+                    <div class="step-number">2</div>
+                    <h5 class="fw-bold text-dark mb-2">Postúlate</h5>
+                    <p class="text-muted small mb-0">
+                        Llena el formulario de solicitud con los datos básicos de tu hogar y tu compromiso de tenencia responsable.
+                    </p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="p-3">
-                    <div class="display-6 text-success mb-2">
-                        <i class="bi bi-chat-heart"></i>
-                    </div>
-                    <h5 class="fw-bold">Soporte Continuo</h5>
-                    <p class="text-muted small mb-0">Brindamos asesoría en nutrición y cuidados post-adopción a cada familia adoptante.</p>
+                <div class="info-card-step">
+                    <div class="step-number">3</div>
+                    <h5 class="fw-bold text-dark mb-2">Bienvenido a Casa</h5>
+                    <p class="text-muted small mb-0">
+                        El equipo de la fundación evaluará tu solicitud y coordinará la entrega de tu nuevo compañero.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
-{% endblock %}
 
+<!-- SECCIÓN: CONTACTO -->
+<section id="contacto" class="py-5 bg-white border-bottom">
+    <div class="container text-center py-2">
+        <h4 class="fw-bold text-dark mb-2">¿Tienes preguntas o deseas ser voluntario?</h4>
+        <p class="text-muted small mb-4">
+            Escríbenos a contacto@huellitasdelvalle.org o visítanos en nuestro refugio asociado en el Valle.
+        </p>
+        <a href="{% url 'catalogo' %}" class="btn btn-mockup-dark px-4 py-2">
+            Ver todas las mascotas disponibles
+        </a>
+    </div>
+</section>
+
+{% endblock %}
