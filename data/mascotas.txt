@@ -1,0 +1,7 @@
+id,nombre,especie,raza,edad,peso,foto_url,descripcion,vacunado
+1,Luna,Perro,Golden Retriever Mestizo,2 años,18 kg,https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=80,"Luna es una perrita muy cariñosa y juguetona. Le encanta correr al aire libre, convive excelente con niños y otros perros. ¡Está lista para llenar de amor un hogar!",True
+2,Oliver,Gato,Común Europeo Atigrado,1 año y medio,4.2 kg,https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80,"Oliver es un gato curioso y tranquilo. Adora tomar el sol junto a la ventana y recibir mimos en la cabeza. Sabe usar su arenero perfectamente.",True
+3,Rocky,Perro,Pastor Alemán Mix,3 años,24 kg,https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=80,"Rocky es leal, protector y sumamente inteligente. Aprende trucos con mucha facilidad y es ideal para familias activas que disfrutan de paseos diarios.",True
+4,Mía,Gato,Siamés Mix,8 meses,2.8 kg,https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=800&q=80,"Mía es una cachorrita muy dulce, ronroneadora y sociable. Busca una familia paciente que le brinde mucho cariño y juegos interactivos.",False
+5,Max,Perro,Beagle Mix,4 años,13 kg,https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80,"Max tiene un olfato insaciable y una personalidad encantadora. Siempre alegre, le gusta pasear con correa y convive de maravilla con toda la familia.",True
+

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Huellitas del Valle - Adopción de Mascotas{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --primary-green: #198754;
+            --primary-green-dark: #146c43;
+            --soft-green-bg: #e8f5e9;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f8fafc;
+            color: #334155;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .main-content {
+            flex: 1 0 auto;
+        }
+
+        .navbar-custom {
+            background-color: var(--primary-green) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-custom .navbar-brand {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .navbar-custom .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+        }
+
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .nav-link.active {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .pet-card {
+            border: none;
+            border-radius: 14px;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .pet-card-img {
+            height: 230px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        footer {
+            background-color: #1e293b;
+            color: #cbd5e1;
+        }
+
+        footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
+                <i class="bi bi-heart-pulse-fill fs-4 text-warning"></i>
+                <span>Huellitas del Valle</span>
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="bi bi-house-door-fill me-1"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'catalogo' %}">
+                            <i class="bi bi-grid-fill me-1"></i> Catálogo
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                        <a class="btn btn-outline-light btn-sm px-3 rounded-pill d-inline-flex align-items-center gap-1 shadow-sm" href="/admin/">
+                            <i class="bi bi-shield-lock-fill"></i> Panel Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer Responsivo -->
+    <footer class="pt-5 pb-4 mt-5">
+        <div class="container">
+            <div class="row gy-4 align-items-center justify-content-between">
+                <div class="col-12 col-md-6 text-center text-md-start">
+                    <h5 class="text-white fw-bold d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
+                        <i class="bi bi-heart-pulse-fill text-warning"></i> Huellitas del Valle
+                    </h5>
+                    <p class="small text-secondary mb-0">
+                        Conectando corazones con patitas. Promovemos la adopción responsable y el bienestar animal en nuestra comunidad.
+                    </p>
+                </div>
+                <div class="col-12 col-md-6 text-center text-md-end">
+                    <div class="d-flex justify-content-center justify-content-md-end gap-3 mb-2">
+                        <a href="{% url 'home' %}" class="small">Inicio</a>
+                        <span class="text-muted">•</span>
+                        <a href="{% url 'catalogo' %}" class="small">Catálogo de Adopción</a>
+                        <span class="text-muted">•</span>
+                        <a href="/admin/" class="small">Acceso Administrativo</a>
+                    </div>
+                    <p class="small text-secondary mb-0">
+                        &copy; 2026 Huellitas del Valle. Desarrollado con Django & Bootstrap 5.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

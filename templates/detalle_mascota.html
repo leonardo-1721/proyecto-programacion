@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ mascota.nombre }} | Huellitas del Valle{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-img-container {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        max-height: 520px;
+    }
+
+    .detail-img {
+        width: 100%;
+        height: 100%;
+        max-height: 520px;
+        object-fit: cover;
+    }
+
+    .spec-box {
+        background-color: #f1f5f9;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        transition: all 0.2s ease;
+    }
+
+    .spec-box:hover {
+        background-color: #e2e8f0;
+    }
+
+    .spec-icon {
+        font-size: 1.5rem;
+        color: #198754;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Breadcrumb de Navegación -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-success">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'catalogo' %}" class="text-decoration-none text-success">Catálogo</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ mascota.nombre }}</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5 bg-white">
+        <div class="row g-5 align-items-center">
+            
+            <!-- Columna Izquierda: Imagen de la Mascota -->
+            <div class="col-12 col-lg-6">
+                <div class="position-relative detail-img-container">
+                    <img src="{{ mascota.foto_url }}" alt="{{ mascota.nombre }}" class="detail-img">
+                    
+                    <span class="position-absolute top-0 start-0 m-3 badge {% if mascota.especie == 'Perro' %}bg-primary{% else %}bg-warning text-dark{% endif %} fs-6 rounded-pill px-3 py-2 shadow">
+                        {% if mascota.especie == 'Perro' %}🐶{% else %}🐱{% endif %} {{ mascota.especie }}
+                    </span>
+
+                    {% if mascota.vacunado %}
+                    <span class="position-absolute top-0 end-0 m-3 badge bg-success fs-6 rounded-pill px-3 py-2 shadow">
+                        <i class="bi bi-patch-check-fill me-1"></i> Vacunado
+                    </span>
+                    {% else %}
+                    <span class="position-absolute top-0 end-0 m-3 badge bg-warning text-dark fs-6 rounded-pill px-3 py-2 shadow">
+                        <i class="bi bi-clock-history me-1"></i> Vacunas en proceso
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Ficha Técnica y Adopción -->
+            <div class="col-12 col-lg-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold">
+                        En Adopción
+                    </span>
+                    <span class="text-muted small">ID #{{ mascota.id }}</span>
+                </div>
+
+                <h1 class="display-5 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                    {{ mascota.nombre }}
+                    <i class="bi bi-heart-fill text-danger fs-3"></i>
+                </h1>
+                <p class="text-muted fs-5 mb-4">{{ mascota.raza }}</p>
+
+                <!-- Ficha Técnica en Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="spec-box d-flex align-items-center gap-3">
+                            <i class="bi bi-calendar-event spec-icon"></i>
+                            <div>
+                                <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.75rem;">Edad</small>
+                                <span class="fw-bold text-dark">{{ mascota.edad }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="spec-box d-flex align-items-center gap-3">
+                            <i class="bi bi-speedometer2 spec-icon"></i>
+                            <div>
+                                <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.75rem;">Peso</small>
+                                <span class="fw-bold text-dark">{{ mascota.peso }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="spec-box d-flex align-items-center gap-3">
+                            <i class="bi bi-shield-check spec-icon"></i>
+                            <div>
+                                <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.75rem;">Vacunación</small>
+                                {% if mascota.vacunado %}
+                                <span class="badge bg-success">Al día</span>
+                                {% else %}
+                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="spec-box d-flex align-items-center gap-3">
+                            <i class="bi bi-gender-ambiguous spec-icon"></i>
+                            <div>
+                                <small class="text-muted d-block fw-bold text-uppercase" style="font-size: 0.75rem;">Especie</small>
+                                <span class="fw-bold text-dark">{{ mascota.especie }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-4">
+                    <h5 class="fw-bold text-dark mb-2">Conoce más sobre {{ mascota.nombre }}</h5>
+                    <p class="text-secondary leading-relaxed mb-0" style="font-size: 1.05rem; line-height: 1.6;">
+                        {{ mascota.descripcion }}
+                    </p>
+                </div>
+
+                <!-- Botón de Adopción y Acciones -->
+                <div class="d-grid gap-3 pt-2">
+                    <button class="btn btn-success btn-lg py-3 fw-bold rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2" 
+                            type="button" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#adopcionModal">
+                        <i class="bi bi-heart-fill"></i> Solicitar Adopción
+                    </button>
+                    <a href="{% url 'catalogo' %}" class="btn btn-outline-secondary rounded-pill fw-semibold py-2">
+                        <i class="bi bi-arrow-left me-1"></i> Regresar al Catálogo
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Solicitar Adopción -->
+<div class="modal fade" id="adopcionModal" tabindex="-1" aria-labelledby="adopcionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header bg-success text-white border-0 py-3 rounded-top-4">
+                <h5 class="modal-title fw-bold" id="adopcionModalLabel">
+                    <i class="bi bi-heart-pulse-fill me-2"></i> Solicitar Adopción de {{ mascota.nombre }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="display-4 text-success mb-3">
+                    <i class="bi bi-envelope-heart-fill"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">¡Gracias por tu gran corazón!</h4>
+                <p class="text-muted mb-4">
+                    Estás dando el primer paso para cambiarle la vida a <strong>{{ mascota.nombre }}</strong>. Como aún estamos en fase de prototipo con datos en memoria, el formulario completo de adopción se habilitará pronto con la base de datos.
+                </p>
+                <div class="bg-light p-3 rounded-3 text-start mb-3 border">
+                    <p class="small mb-1 text-muted"><strong>Próximos pasos del proceso:</strong></p>
+                    <ul class="small text-muted mb-0 ps-3">
+                        <li>Llenado de cuestionario socio-ambiental.</li>
+                        <li>Entrevista virtual con el equipo de rescate.</li>
+                        <li>Visita de convivencia programada.</li>
+                    </ul>
+                </div>
+                <button type="button" class="btn btn-success rounded-pill px-4 fw-semibold w-100" data-bs-dismiss="modal">
+                    Entendido, ¡estaré atento!
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

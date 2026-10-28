@@ -13,3 +13,4 @@ __pycache__/
 
 # Archivos de entorno/claves secretas
 .env
+
