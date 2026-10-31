@@ -157,41 +157,17 @@
 
     <div class="row g-5 align-items-start">
         
-        <!-- COLUMNA IZQUIERDA: Foto Principal + Miniaturas + Badge Disponible -->
+        <!-- COLUMNA IZQUIERDA: Foto Principal + Badge Disponible -->
         <div class="col-12 col-lg-6">
-            <div class="detail-main-img-box mb-3 shadow-sm">
+            <div class="detail-main-img-box mb-3 shadow-sm position-relative">
                 <img src="{{ mascota.foto_url }}" alt="{{ mascota.nombre }}" id="mainPhoto">
-            </div>
-
-            <!-- Miniaturas adicionales simuladas como en el mockup -->
-            <div class="row g-2 mb-3">
-                <div class="col-3">
-                    <div class="gallery-thumb border border-2 border-dark" onclick="document.getElementById('mainPhoto').src='{{ mascota.foto_url }}'">
-                        <img src="{{ mascota.foto_url }}" alt="thumb 1">
-                    </div>
+                
+                <!-- Badge "Disponible" en verde menta sobre la foto -->
+                <div class="position-absolute bottom-0 start-0 m-3">
+                    <span class="badge-disponible px-3 py-2 shadow-sm">
+                        <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i> {{ mascota.estado }}
+                    </span>
                 </div>
-                <div class="col-3">
-                    <div class="gallery-thumb" onclick="document.getElementById('mainPhoto').src='https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80'">
-                        <img src="https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80" alt="thumb 2">
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="gallery-thumb" onclick="document.getElementById('mainPhoto').src='https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&w=800&q=80'">
-                        <img src="https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&w=800&q=80" alt="thumb 3">
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="gallery-thumb" onclick="document.getElementById('mainPhoto').src='{{ mascota.foto_url }}'">
-                        <img src="{{ mascota.foto_url }}" alt="thumb 4">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Badge "Disponible" en verde menta -->
-            <div>
-                <span class="badge-disponible px-3 py-2">
-                    <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i> {{ mascota.estado }}
-                </span>
             </div>
         </div>
 
