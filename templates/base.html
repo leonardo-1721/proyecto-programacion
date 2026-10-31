@@ -46,7 +46,7 @@
 
             <!-- Acceso Admin -->
             <div class="d-flex align-items-center gap-2">
-                <a href="/admin/" class="btn-admin-pill d-inline-flex align-items-center gap-1">
+                <a href="{% url 'panel_admin' %}" class="btn-admin-pill d-inline-flex align-items-center gap-1">
                     <i class="bi bi-person-fill-lock"></i> [ Acceso Admin ]
                 </a>
             </div>
@@ -76,7 +76,7 @@
                         <span>·</span>
                         <a href="{% url 'catalogo' %}">Catálogo</a>
                         <span>·</span>
-                        <a href="/admin/">Panel Administrativo</a>
+                        <a href="{% url 'panel_admin' %}">Panel Administrativo</a>
                     </div>
                     <span class="small">&copy; 2026 Huellitas del Valle · Cali, Colombia</span>
                 </div>

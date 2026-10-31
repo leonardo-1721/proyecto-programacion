@@ -2,9 +2,23 @@
 
 {% block title %}Ficha de {{ mascota.nombre }} | Huellitas del Valle{% endblock %}
 
-
 {% block content %}
 <div class="container py-4 py-md-5">
+
+    <!-- MENSAJE DE CONFIRMACIÓN SI SE ACABA DE ENVIAR LA SOLICITUD (Mockup Página 10) -->
+    {% if codigo_tramite %}
+    <div class="alert text-center p-4 rounded-4 mb-5 shadow-sm border-0" style="background-color: #fef3c7; color: #78350f;">
+        <div class="fs-1 mb-2">🎉</div>
+        <h3 class="fw-bold mb-2">¡Solicitud registrada con éxito!</h3>
+        <p class="mb-3" style="font-size: 1.05rem;">
+            Tu código de trámite es <strong class="badge bg-dark text-white px-3 py-2 rounded-pill fs-6">{{ codigo_tramite }}</strong>.<br>
+            La fundación revisará tus datos en el archivo de solicitudes y se pondrá en contacto contigo pronto.
+        </p>
+        <a href="{% url 'catalogo' %}" class="btn btn-mockup-dark px-4 py-2">
+            Volver al Catálogo
+        </a>
+    </div>
+    {% endif %}
 
     <!-- Migas de pan del Wireframe: Inicio > Catálogo > [Nombre] -->
     <div class="mockup-breadcrumb mb-4">
@@ -34,7 +48,7 @@
         <!-- COLUMNA DERECHA: Ficha Técnica + Historia + CTA Adoptar -->
         <div class="col-12 col-lg-6">
             
-            <!-- ID de la Mascota: ID: #M-104 -->
+            <!-- ID de la Mascota: ID: #M-101 -->
             <div class="id-tag-box mb-3">
                 ID: #M-10{{ mascota.id }}
             </div>
@@ -104,12 +118,18 @@
 
             <!-- BOTÓN DESTACADO AMARILLO SUAVE (Mockup CTA: ¡Quiero Adoptar a Luna!) -->
             <div class="text-center">
+                {% if mascota.estado == 'Disponible' %}
                 <button type="button" 
                         class="btn-yellow-adopt mb-3" 
                         data-bs-toggle="modal" 
                         data-bs-target="#solicitudModal">
                     ¡Quiero Adoptar a {{ mascota.nombre }}!
                 </button>
+                {% else %}
+                <div class="alert alert-secondary rounded-pill py-3 fw-bold mb-3">
+                    Esta mascota ya ha sido adoptada ❤️
+                </div>
+                {% endif %}
 
                 <!-- Enlace ← Volver al Catálogo -->
                 <a href="{% url 'catalogo' %}" class="link-back-catalog d-inline-flex align-items-center gap-1">
@@ -123,135 +143,143 @@
 
 </div>
 
-<!-- MODAL CON EL FORMULARIO DE POSTULACIÓN SEGÚN EL MOCKUP RF3 (Página 10 del documento) -->
+<!-- ========================================================================
+     MODAL CON EL FORMULARIO DE POSTULACIÓN SEGÚN EL MOCKUP RF3 (Página 10)
+     Envía los datos por POST a la vista 'enviar_solicitud' para guardarse en solicitudes.txt
+     ======================================================================== -->
 <div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 rounded-4 shadow">
             
-            <div class="modal-header border-0 pb-0 pt-4 px-4">
-                <div>
-                    <h5 class="fw-bold mb-1 text-dark" id="solicitudModalLabel">
-                        Formulario de Solicitud de Adopción
-                    </h5>
-                    <p class="text-muted small mb-0">
-                        Estás postulándote para adoptar a: <strong>{{ mascota.nombre }} · ID #M-10{{ mascota.id }}</strong>
-                    </p>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-
-            <div class="modal-body p-4">
+            <form method="POST" action="{% url 'enviar_solicitud' mascota.id %}">
+                {% csrf_token %}
                 
-                <!-- 1. Datos Personales -->
-                <div class="mb-4">
-                    <h6 class="fw-bold text-dark mb-3">1 · Datos Personales</h6>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Nombre completo</label>
-                            <input type="text" class="form-control rounded-pill" placeholder="Tu nombre completo">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Cédula / Documento</label>
-                            <input type="text" class="form-control rounded-pill" placeholder="Número de identificación">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Teléfono móvil</label>
-                            <input type="tel" class="form-control rounded-pill" placeholder="Ej. 300 123 4567">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Correo electrónico</label>
-                            <input type="email" class="form-control rounded-pill" placeholder="correo@ejemplo.com">
-                        </div>
-                        <div class="col-md-8">
-                            <label class="form-label small text-muted">Dirección</label>
-                            <input type="text" class="form-control rounded-pill" placeholder="Calle / Carrera / Barrio">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted">Ciudad</label>
-                            <input type="text" class="form-control rounded-pill" value="Cali">
-                        </div>
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark" id="solicitudModalLabel">
+                            Formulario de Solicitud de Adopción
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            Estás postulándote para adoptar a: <strong>{{ mascota.nombre }} · ID #M-10{{ mascota.id }}</strong>
+                        </p>
                     </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
-                <!-- 2. Perfil del Hogar -->
-                <div class="mb-4">
-                    <h6 class="fw-bold text-dark mb-3">2 · Perfil del Hogar</h6>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label small text-muted d-block">Tipo de vivienda</label>
-                            <div class="d-flex gap-3 flex-wrap small">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="vivienda" id="v1" checked>
-                                    <label class="form-check-label" for="v1">Casa con patio</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="vivienda" id="v2">
-                                    <label class="form-check-label" for="v2">Apartamento</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="vivienda" id="v3">
-                                    <label class="form-check-label" for="v3">Finca / Casa campestre</label>
-                                </div>
+                <div class="modal-body p-4">
+                    
+                    <!-- 1. Datos Personales -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-dark mb-3">1 · Datos Personales</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Nombre completo *</label>
+                                <input type="text" name="nombre_completo" class="form-control rounded-pill" placeholder="Tu nombre completo" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Cédula / Documento *</label>
+                                <input type="text" name="cedula" class="form-control rounded-pill" placeholder="Número de identificación" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Teléfono móvil *</label>
+                                <input type="tel" name="telefono" class="form-control rounded-pill" placeholder="Ej. 300 123 4567" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Correo electrónico *</label>
+                                <input type="email" name="correo" class="form-control rounded-pill" placeholder="correo@ejemplo.com" required>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label small text-muted">Dirección *</label>
+                                <input type="text" name="direccion" class="form-control rounded-pill" placeholder="Calle / Carrera / Barrio" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small text-muted">Ciudad *</label>
+                                <input type="text" name="ciudad" class="form-control rounded-pill" value="Cali" required>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted d-block">¿Hay otras mascotas en el hogar?</label>
-                            <div class="d-flex gap-3 small">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="otras_mascotas" id="m1" value="si">
-                                    <label class="form-check-label" for="m1">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="otras_mascotas" id="m2" value="no" checked>
-                                    <label class="form-check-label" for="m2">No</label>
+                    <!-- 2. Perfil del Hogar -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-dark mb-3">2 · Perfil del Hogar</h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label small text-muted d-block">Tipo de vivienda</label>
+                                <div class="d-flex gap-3 flex-wrap small">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="vivienda" id="v1" value="Casa con patio" checked>
+                                        <label class="form-check-label" for="v1">Casa con patio</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="vivienda" id="v2" value="Apartamento">
+                                        <label class="form-check-label" for="v2">Apartamento</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="vivienda" id="v3" value="Finca">
+                                        <label class="form-check-label" for="v3">Finca / Casa campestre</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted d-block">¿Todos los miembros están de acuerdo?</label>
-                            <div class="d-flex gap-3 small">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="acuerdo" id="a1" value="si" checked>
-                                    <label class="form-check-label" for="a1">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="acuerdo" id="a2" value="no">
-                                    <label class="form-check-label" for="a2">No</label>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted d-block">¿Hay otras mascotas en el hogar?</label>
+                                <div class="d-flex gap-3 small">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="otras_mascotas" id="m1" value="Sí">
+                                        <label class="form-check-label" for="m1">Sí</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="otras_mascotas" id="m2" value="No" checked>
+                                        <label class="form-check-label" for="m2">No</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-12">
-                            <label class="form-label small text-muted">Horas al día que el animal pasará solo</label>
-                            <input type="text" class="form-control rounded-pill" placeholder="Ej. 3 a 4 horas">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted d-block">¿Todos los miembros están de acuerdo?</label>
+                                <div class="d-flex gap-3 small">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="acuerdo_familiar" id="a1" value="Sí" checked>
+                                        <label class="form-check-label" for="a1">Sí</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="acuerdo_familiar" id="a2" value="No">
+                                        <label class="form-check-label" for="a2">No</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small text-muted">Horas al día que el animal pasará solo</label>
+                                <input type="text" name="horas_solo" class="form-control rounded-pill" value="4 horas">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 3. Compromiso -->
-                <div class="mb-4 bg-light p-3 rounded-3 border">
-                    <h6 class="fw-bold text-dark mb-2">3 · Compromiso</h6>
-                    <div class="form-check small text-muted">
-                        <input class="form-check-input" type="checkbox" id="compromiso" checked>
-                        <label class="form-check-label" for="compromiso">
-                            Acepto los términos de tenencia responsable y me comprometo al cuidado integral del animal.
-                        </label>
+                    <!-- 3. Compromiso -->
+                    <div class="mb-4 bg-light p-3 rounded-3 border">
+                        <h6 class="fw-bold text-dark mb-2">3 · Compromiso</h6>
+                        <div class="form-check small text-muted">
+                            <input class="form-check-input" type="checkbox" id="compromiso" required checked>
+                            <label class="form-check-label" for="compromiso">
+                                Acepto los términos de tenencia responsable y me comprometo al cuidado integral del animal.
+                            </label>
+                        </div>
                     </div>
+
+                    <!-- Botón Enviar Solicitud de Adopción (Mockup RF3) -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-mockup-dark w-100 py-3">
+                            Enviar Solicitud de Adopción
+                        </button>
+                        <button type="button" class="btn btn-mockup-light px-4" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div>
+
                 </div>
 
-                <!-- Botón Enviar Solicitud de Adopción (Mockup RF3) -->
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-mockup-dark w-100 py-3" data-bs-dismiss="modal" onclick="alert('¡Solicitud registrada con éxito!\nTu código de trámite es #SOL-2026. La fundación revisará tus datos y se pondrá en contacto contigo pronto.')">
-                        Enviar Solicitud de Adopción
-                    </button>
-                    <button type="button" class="btn btn-mockup-light px-4" data-bs-dismiss="modal">
-                        Cancelar
-                    </button>
-                </div>
-
-            </div>
+            </form>
 
         </div>
     </div>
