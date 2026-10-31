@@ -5,6 +5,21 @@
 {% block content %}
 <div class="container py-4 py-md-5">
 
+    <!-- MENÚ SUPERIOR DEL ADMINISTRADOR (Pestañas de Navegación) -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'panel_admin' %}" class="btn btn-mockup-dark btn-sm">
+                <i class="bi bi-inbox me-1"></i> Solicitudes de Adopción
+            </a>
+            <a href="{% url 'admin_mascotas' %}" class="btn btn-mockup-light btn-sm">
+                <i class="bi bi-list-task me-1"></i> Mascotas Registradas
+            </a>
+        </div>
+        <a href="{% url 'registrar_mascota' %}" class="btn btn-mockup-dark btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> + Registrar Nueva Mascota
+        </a>
+    </div>
+
     <!-- ENCABEZADO DEL ADMINISTRADOR (Mockup Página 11) -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>

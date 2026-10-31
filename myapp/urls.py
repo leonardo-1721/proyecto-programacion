@@ -22,4 +22,10 @@ urlpatterns = [
 
     # 6. Acción para aprobar o rechazar solicitudes
     path('panel-admin/solicitud/<str:id_solicitud>/<str:accion>/', views.gestionar_solicitud_view, name='gestionar_solicitud'),
+
+    # 7. Inventario de mascotas registradas para el admin
+    path('panel-admin/mascotas/', views.admin_mascotas_view, name='admin_mascotas'),
+
+    # 8. Formulario para registrar una nueva mascota rescatada (RF1)
+    path('panel-admin/registrar-mascota/', views.registrar_mascota_view, name='registrar_mascota'),
 ]

@@ -97,6 +97,41 @@ def actualizar_estado_mascota(id_mascota, nuevo_estado):
     return modificado
 
 
+def guardar_nueva_mascota(datos):
+    """
+    Agrega una nueva mascota al archivo data/mascotas.txt.
+    Calcula el siguiente ID numérico autoincremental (ej: si el último era 6, el nuevo será 7).
+    """
+    mascotas = leer_todas_las_mascotas()
+    ids_existentes = [m['id'] for m in mascotas]
+    nuevo_id = max(ids_existentes, default=0) + 1
+
+    nueva_fila = {
+        'id': nuevo_id,
+        'nombre': datos.get('nombre', '').strip(),
+        'especie': datos.get('especie', '').strip(),
+        'raza': datos.get('raza', '').strip() or 'Mestizo',
+        'edad': datos.get('edad', '').strip() or '1 año',
+        'sexo': datos.get('sexo', '').strip() or 'Macho',
+        'tamano': datos.get('tamano', '').strip() or 'Mediano',
+        'peso': datos.get('peso', '').strip() or '10 kg',
+        'foto_url': datos.get('foto_url', '').strip() or 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80',
+        'descripcion': datos.get('descripcion', '').strip(),
+        'vacunado': bool(datos.get('vacunado', False)),
+        'estado': datos.get('estado', 'Disponible').strip() or 'Disponible'
+    }
+
+    archivo_nuevo = not RUTA_MASCOTAS.exists()
+    with open(RUTA_MASCOTAS, mode='a', encoding='utf-8', newline='') as archivo:
+        escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_MASCOTAS)
+        if archivo_nuevo:
+            escritor.writeheader()
+        escritor.writerow(nueva_fila)
+
+    return nuevo_id
+
+
+
 # ==============================================================================
 # FUNCIONES PARA GESTIONAR SOLICITUDES DE ADOPCIÓN (solicitudes.txt)
 # ==============================================================================

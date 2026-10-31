@@ -192,6 +192,72 @@ def gestionar_solicitud_view(request, id_solicitud, accion):
 
 
 # ==============================================================================
+# VISTA 7: INVENTARIO DE MASCOTAS PARA EL ADMINISTRADOR
+# ==============================================================================
+def admin_mascotas_view(request):
+    """
+    Muestra la lista completa de mascotas en el refugio, incluyendo
+    las que están Disponibles, en Tratamiento y ya Adoptadas.
+    """
+    mascotas = storage.leer_todas_las_mascotas()
+    mensaje_exito = request.GET.get('guardado', '')
+
+    return render(request, 'admin_mascotas.html', {
+        'mascotas': mascotas,
+        'total_mascotas': len(mascotas),
+        'mensaje_exito': mensaje_exito
+    })
+
+
+# ==============================================================================
+# VISTA 8: REGISTRAR NUEVA MASCOTA (RF1 - Mockup Página 12)
+# ==============================================================================
+def registrar_mascota_view(request):
+    """
+    Maneja el registro de una nueva mascota rescatada:
+    - GET: Muestra el formulario con los campos del mockup.
+    - POST: Guarda la mascota en data/mascotas.txt y redirige al inventario.
+    """
+    if request.method == 'POST':
+        # Procesamos la edad combinando número y unidad (ej: "2" + "años" = "2 años")
+        edad_num = request.POST.get('edad_numero', '1').strip()
+        edad_unidad = request.POST.get('edad_unidad', 'años').strip()
+        edad_formateada = f"{edad_num} {edad_unidad}"
+
+        # Foto: si no suben una URL propia, asignamos una imagen bonita por defecto según especie
+        especie = request.POST.get('especie', 'Perro').strip()
+        foto_url = request.POST.get('foto_url', '').strip()
+        if not foto_url:
+            if especie.lower() == 'gato':
+                foto_url = 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80'
+            else:
+                foto_url = 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80'
+
+        datos_mascota = {
+            'nombre': request.POST.get('nombre', '').strip(),
+            'especie': especie,
+            'raza': request.POST.get('raza', 'Mestizo').strip(),
+            'edad': edad_formateada,
+            'sexo': request.POST.get('sexo', 'Macho').strip(),
+            'tamano': request.POST.get('tamano', 'Mediano').strip(),
+            'peso': request.POST.get('peso', '10 kg').strip(),
+            'foto_url': foto_url,
+            'descripcion': request.POST.get('descripcion', '').strip(),
+            'vacunado': request.POST.get('vacunado') == 'si',
+            'estado': request.POST.get('estado', 'Disponible').strip()
+        }
+
+        # Guardamos en data/mascotas.txt
+        nuevo_id = storage.guardar_nueva_mascota(datos_mascota)
+
+        # Redirigimos al inventario de mascotas con confirmación
+        return redirect('/panel-admin/mascotas/?guardado=1')
+
+    # Si es GET, mostramos el formulario
+    return render(request, 'admin_registrar_mascota.html')
+
+
+# ==============================================================================
 # ALIAS PARA ENLACES ANTERIORES
 # ==============================================================================
 home_view = inicio_view
