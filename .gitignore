@@ -14,3 +14,9 @@ __pycache__/
 # Archivos de entorno/claves secretas
 .env
 
+# Archivos de estudio y notas personales
+*estudio*
+*ESTUDIO*
+GUIA_*
+
+

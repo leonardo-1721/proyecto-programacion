@@ -1,0 +1,451 @@
+/* ==========================================================================
+   HUELLITAS DEL VALLE - ESTILOS PRINCIPALES
+   Arquitectura limpia: CSS desacoplado de las plantillas HTML
+   ========================================================================== */
+
+/* ==========================================================================
+   1. VARIABLES & PALETA DE COLORES SUAVE (Basada en Wireframes/Mockups)
+   ========================================================================== */
+:root {
+    --bg-canvas: #fcfbf8;           /* Fondo cálido y suave */
+    --bg-surface: #ffffff;          /* Blanco de tarjetas y contenedores */
+    --bg-subtle: #f4f3ef;           /* Gris/beige tenue de filtros y cajas */
+    
+    --dark-btn: #383632;            /* Antracita / Grafito de los botones mockup */
+    --dark-btn-hover: #23221f;
+    
+    --mint-badge-bg: #cbf3e3;       /* Verde menta suave "Disponible" */
+    --mint-badge-text: #0f6244;
+    
+    --yellow-cta: #fae49d;          /* Amarillo pastel suave para botón de adopción */
+    --yellow-cta-hover: #f7da7f;
+    --yellow-cta-text: #594200;
+    
+    --border-soft: #eae7df;
+    --text-main: #2b2927;
+    --text-muted: #706c66;
+}
+
+/* ==========================================================================
+   2. RESETEO BASE & TIPOGRAFÍA
+   ========================================================================== */
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-canvas);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+}
+
+.main-wrapper {
+    flex: 1 0 auto;
+}
+
+/* ==========================================================================
+   3. BARRA DE NAVEGACIÓN SUPERIOR (NAVBAR)
+   ========================================================================== */
+.mockup-navbar {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-soft);
+    padding: 0.85rem 0;
+}
+
+.navbar-brand-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+    text-decoration: none;
+    letter-spacing: -0.3px;
+}
+
+.nav-separator {
+    color: #ccc8be;
+    margin: 0 0.65rem;
+    font-weight: 300;
+}
+
+.mockup-nav-link {
+    color: #55524c;
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.15s ease;
+}
+
+.mockup-nav-link:hover {
+    color: var(--dark-btn);
+}
+
+.btn-admin-pill {
+    color: var(--text-main);
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-soft);
+    border-radius: 50px;
+    padding: 0.35rem 0.95rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-admin-pill:hover {
+    background-color: #eae7e0;
+    color: #000;
+}
+
+/* ==========================================================================
+   4. BOTONES & COMPONENTES REUTILIZABLES
+   ========================================================================== */
+.btn-mockup-dark {
+    background-color: var(--dark-btn);
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.6rem 1.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-mockup-dark:hover {
+    background-color: var(--dark-btn-hover);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.btn-mockup-light {
+    background-color: #ffffff;
+    color: var(--text-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 50px;
+    padding: 0.55rem 1.3rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-mockup-light:hover {
+    background-color: var(--bg-subtle);
+    color: var(--dark-btn);
+}
+
+.badge-disponible {
+    background-color: var(--mint-badge-bg);
+    color: var(--mint-badge-text);
+    font-weight: 600;
+    font-size: 0.78rem;
+    border-radius: 50px;
+    padding: 0.35rem 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ==========================================================================
+   5. TARJETAS DE MASCOTAS (CATÁLOGO & HOME)
+   ========================================================================== */
+.pet-mockup-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.pet-mockup-card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transform: translateY(-3px);
+}
+
+.pet-img-wrap {
+    height: 220px;
+    background-color: #e6e4dc;
+    position: relative;
+    overflow: hidden;
+}
+
+.pet-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pet-card-info {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/* ==========================================================================
+   6. PÁGINA DE INICIO (HOME)
+   ========================================================================== */
+.mockup-hero-section {
+    padding: 4.5rem 1rem 3.5rem;
+    background: radial-gradient(circle at 50% 30%, #ffffff 0%, var(--bg-canvas) 85%);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.hero-search-box {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 50px;
+    padding: 0.4rem 0.5rem 0.4rem 1.4rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.hero-search-box input {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 0.95rem;
+}
+
+.info-card-step {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 1.8rem 1.4rem;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-card-step:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.03);
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 50%;
+    background-color: var(--bg-subtle);
+    color: var(--dark-btn);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin: 0 auto 1rem;
+}
+
+/* ==========================================================================
+   7. CATÁLOGO & FILTROS (RF5)
+   ========================================================================== */
+.search-pill-wrapper {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 50px;
+    padding: 0.35rem 0.45rem 0.35rem 1.4rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.search-pill-wrapper input {
+    border: none;
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.search-pill-wrapper input::placeholder {
+    color: #9c978f;
+}
+
+.mockup-filters-container {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 1.15rem 1.4rem;
+    margin-top: 1.75rem;
+    margin-bottom: 2.25rem;
+}
+
+.mockup-select {
+    background-color: #ffffff;
+    border: 1px solid var(--border-soft);
+    border-radius: 50px;
+    padding: 0.5rem 1.1rem;
+    font-size: 0.88rem;
+    color: #4a4742;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.mockup-select:focus {
+    border-color: #9c978f;
+    box-shadow: none;
+}
+
+.filter-label-header {
+    font-size: 0.76rem;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    color: #7b766e;
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+}
+
+.mockup-pagination a {
+    color: #55524c;
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.mockup-pagination a.active,
+.mockup-pagination a:hover {
+    background-color: var(--bg-subtle);
+    color: #000;
+}
+
+/* ==========================================================================
+   8. DETALLE DE MASCOTA & FICHA TÉCNICA (RF2, RF4, RF3)
+   ========================================================================== */
+.mockup-breadcrumb {
+    font-size: 0.88rem;
+    color: #7b766e;
+}
+
+.mockup-breadcrumb a {
+    color: #7b766e;
+    text-decoration: none;
+}
+
+.mockup-breadcrumb a:hover {
+    color: var(--dark-btn);
+}
+
+.detail-main-img-box {
+    border-radius: 18px;
+    overflow: hidden;
+    background-color: #e6e4dc;
+    height: 480px;
+    position: relative;
+}
+
+.detail-main-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.id-tag-box {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 0.45rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #635f58;
+    letter-spacing: 0.4px;
+    text-align: right;
+}
+
+.spec-card-mockup {
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 0.85rem 0.5rem;
+    text-align: center;
+}
+
+.spec-card-label {
+    font-size: 0.75rem;
+    color: #7b766e;
+    margin-bottom: 0.25rem;
+    text-transform: capitalize;
+}
+
+.spec-card-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.health-status-banner {
+    background-color: var(--mint-badge-bg);
+    color: var(--mint-badge-text);
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-yellow-adopt {
+    background-color: var(--yellow-cta);
+    color: var(--yellow-cta-text);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 50px;
+    padding: 0.95rem 1.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(250, 228, 157, 0.4);
+    transition: all 0.2s ease;
+}
+
+.btn-yellow-adopt:hover {
+    background-color: var(--yellow-cta-hover);
+    color: var(--yellow-cta-text);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(250, 228, 157, 0.6);
+}
+
+.link-back-catalog {
+    color: #635f58;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color 0.15s ease;
+}
+
+.link-back-catalog:hover {
+    color: var(--dark-btn);
+}
+
+/* ==========================================================================
+   9. FOOTER
+   ========================================================================== */
+footer.mockup-footer {
+    background-color: var(--bg-surface);
+    border-top: 1px solid var(--border-soft);
+    padding: 2.5rem 0 1.8rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+footer.mockup-footer a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+footer.mockup-footer a:hover {
+    color: var(--dark-btn);
+}
+
