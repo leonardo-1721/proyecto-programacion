@@ -1,9 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Huellitas del Valle{% endblock %}</title>
+
+    <!-- Favicon / Logo de la pestaña del navegador -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="alternate icon" type="image/png" href="{% static 'img/favicon.png' %}">
 
     <!-- Google Fonts: Inter / Plus Jakarta Sans para acabado limpio y moderno -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,199 +21,8 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <style>
-        /* ================= PALETA DE COLORES SUAVE (MOCKUP ACCURATE) ================= */
-        :root {
-            --bg-canvas: #fcfbf8;           /* Fondo cálido y suave */
-            --bg-surface: #ffffff;          /* Blanco tarjetas */
-            --bg-subtle: #f4f3ef;           /* Gris/beige tenue de cajas y filtros */
-            
-            --dark-btn: #383632;            /* Antracita / Grafito de los botones del mockup */
-            --dark-btn-hover: #23221f;
-            
-            --mint-badge-bg: #cbf3e3;       /* Verde menta suave "Disponible" */
-            --mint-badge-text: #0f6244;
-            
-            --yellow-cta: #fae49d;          /* Amarillo pastel suave para botón de adopción */
-            --yellow-cta-hover: #f7da7f;
-            --yellow-cta-text: #594200;
-            
-            --border-soft: #eae7df;
-            --text-main: #2b2927;
-            --text-muted: #706c66;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-canvas);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .main-wrapper {
-            flex: 1 0 auto;
-        }
-
-        /* ===== NAVBAR SUPERIOR EXACTA AL MOCKUP ===== */
-        .mockup-navbar {
-            background-color: var(--bg-surface);
-            border-bottom: 1px solid var(--border-soft);
-            padding: 0.85rem 0;
-        }
-
-        .navbar-brand-text {
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--text-main);
-            text-decoration: none;
-            letter-spacing: -0.3px;
-        }
-
-        .nav-separator {
-            color: #ccc8be;
-            margin: 0 0.65rem;
-            font-weight: 300;
-        }
-
-        .mockup-nav-link {
-            color: #55524c;
-            text-decoration: none;
-            font-size: 0.92rem;
-            font-weight: 500;
-            padding: 0.25rem 0.5rem;
-            transition: color 0.15s ease;
-        }
-
-        .mockup-nav-link:hover {
-            color: var(--dark-btn);
-        }
-
-        .btn-admin-pill {
-            color: var(--text-main);
-            background-color: var(--bg-subtle);
-            border: 1px solid var(--border-soft);
-            border-radius: 50px;
-            padding: 0.35rem 0.95rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .btn-admin-pill:hover {
-            background-color: #eae7e0;
-            color: #000;
-        }
-
-        /* ===== COMPONENTES GENERALES DEL MOCKUP ===== */
-        .btn-mockup-dark {
-            background-color: var(--dark-btn);
-            color: #ffffff;
-            border: none;
-            border-radius: 50px;
-            padding: 0.6rem 1.4rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-mockup-dark:hover {
-            background-color: var(--dark-btn-hover);
-            color: #ffffff;
-            transform: translateY(-1px);
-        }
-
-        .btn-mockup-light {
-            background-color: #ffffff;
-            color: var(--text-main);
-            border: 1px solid var(--border-soft);
-            border-radius: 50px;
-            padding: 0.55rem 1.3rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .btn-mockup-light:hover {
-            background-color: var(--bg-subtle);
-            color: var(--dark-btn);
-        }
-
-        .badge-disponible {
-            background-color: var(--mint-badge-bg);
-            color: var(--mint-badge-text);
-            font-weight: 600;
-            font-size: 0.78rem;
-            border-radius: 50px;
-            padding: 0.35rem 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* ===== TARJETA DE MASCOTA SEGÚN WIREFRAME ===== */
-        .pet-mockup-card {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-soft);
-            border-radius: 18px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
-        }
-
-        .pet-mockup-card:hover {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            transform: translateY(-3px);
-        }
-
-        .pet-img-wrap {
-            height: 220px;
-            background-color: #e6e4dc;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pet-img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .pet-card-info {
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        /* ===== FOOTER SUAVE Y MINIMALISTA ===== */
-        footer.mockup-footer {
-            background-color: var(--bg-surface);
-            border-top: 1px solid var(--border-soft);
-            padding: 2.5rem 0 1.8rem;
-            font-size: 0.88rem;
-            color: var(--text-muted);
-        }
-
-        footer.mockup-footer a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        footer.mockup-footer a:hover {
-            color: var(--dark-btn);
-        }
-    </style>
+    <!-- Estilos Personalizados Desacoplados -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -236,7 +50,7 @@
 
             <!-- Acceso Admin -->
             <div class="d-flex align-items-center gap-2">
-                <a href="/admin/" class="btn-admin-pill d-inline-flex align-items-center gap-1">
+                <a href="{% url 'panel_admin' %}" class="btn-admin-pill d-inline-flex align-items-center gap-1">
                     <i class="bi bi-person-fill-lock"></i> [ Acceso Admin ]
                 </a>
             </div>
@@ -266,7 +80,7 @@
                         <span>·</span>
                         <a href="{% url 'catalogo' %}">Catálogo</a>
                         <span>·</span>
-                        <a href="/admin/">Panel Administrativo</a>
+                        <a href="{% url 'panel_admin' %}">Panel Administrativo</a>
                     </div>
                     <span class="small">&copy; 2026 Huellitas del Valle · Cali, Colombia</span>
                 </div>
