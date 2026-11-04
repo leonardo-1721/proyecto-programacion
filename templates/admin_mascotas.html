@@ -46,11 +46,22 @@
     {% endif %}
 
     <!-- ENCABEZADO -->
-    <div class="mb-4">
-        <h2 class="fw-bold text-dark mb-1">Mascotas Registradas en el Refugio</h2>
-        <p class="text-muted small mb-0">
-            Supervisa el estado de todos los animales rescatados, su disponibilidad pública y su historial veterinario.
-        </p>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Mascotas Registradas en el Refugio</h2>
+            <p class="text-muted small mb-0">
+                Supervisa el estado de todos los animales rescatados, su disponibilidad pública y su historial veterinario.
+            </p>
+        </div>
+        <div class="text-md-end">
+            <span class="small text-muted d-block">Sesión activa como:</span>
+            <div class="d-flex align-items-center justify-content-md-end gap-2 mt-1">
+                <strong class="text-dark"><i class="bi bi-person-check-fill text-success me-1"></i> Admin: Huellitas del Valle</strong>
+                <a href="{% url 'logout_admin' %}" class="btn btn-outline-danger btn-sm rounded-pill px-2 py-0" style="font-size: 0.78rem;" title="Cerrar sesión">
+                    <i class="bi bi-box-arrow-right me-1"></i> Salir
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- TABLA DE MASCOTAS -->

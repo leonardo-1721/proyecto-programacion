@@ -48,11 +48,20 @@
                 <a href="{% url 'home' %}#contacto" class="mockup-nav-link">Contacto</a>
             </nav>
 
-            <!-- Acceso Admin -->
+            <!-- Acceso Admin / Estado de Sesión -->
             <div class="d-flex align-items-center gap-2">
+                {% if request.session.admin_autenticado %}
                 <a href="{% url 'panel_admin' %}" class="btn-admin-pill d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-speedometer2"></i> Panel Admin
+                </a>
+                <a href="{% url 'logout_admin' %}" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 small" title="Cerrar sesión">
+                    <i class="bi bi-box-arrow-right me-1"></i> Salir
+                </a>
+                {% else %}
+                <a href="{% url 'login_admin' %}" class="btn-admin-pill d-inline-flex align-items-center gap-1">
                     <i class="bi bi-person-fill-lock"></i> [ Acceso Admin ]
                 </a>
+                {% endif %}
             </div>
 
         </div>

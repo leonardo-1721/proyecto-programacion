@@ -37,4 +37,8 @@ urlpatterns = [
 
     # 8. Formulario para registrar una nueva mascota rescatada (RF1)
     path('panel-admin/registrar-mascota/', views.registrar_mascota_view, name='registrar_mascota'),
+
+    # 9. Autenticación liviana del Administrador (RNF4: Sesión en cookies sin SQL)
+    path('login/', views.login_admin_view, name='login_admin'),
+    path('logout/', views.logout_admin_view, name='logout_admin'),
 ]

@@ -1,7 +1,68 @@
+from functools import wraps
 from urllib.parse import quote
 from django.shortcuts import render, redirect
 from django.http import Http404
 from . import storage
+
+
+# ==============================================================================
+# CONFIGURACIÓN DE ACCESO ADMINISTRATIVO (RNF4: Sesiones firmadas sin SQL)
+# ==============================================================================
+ADMIN_USUARIO = 'admin'
+ADMIN_CLAVE = 'huellitas2026'
+
+
+def admin_requerido(view_func):
+    """
+    Decorador para proteger las rutas del panel administrativo.
+    Si el usuario no ha iniciado sesión ('admin_autenticado' no existe o es False),
+    lo redirige automáticamente a la pantalla de login guardando la ruta de destino (?next=).
+    """
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('admin_autenticado'):
+            return redirect(f"/login/?next={request.path}")
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+def login_admin_view(request):
+    """
+    Controla el inicio de sesión del administrador:
+    - GET: Muestra la pantalla de login. Si ya tiene sesión activa, va directo al panel.
+    - POST: Verifica las credenciales. Si coinciden, crea la sesión en cookie firmada.
+    """
+    if request.session.get('admin_autenticado'):
+        return redirect('panel_admin')
+
+    error = None
+    username_intentado = ''
+
+    if request.method == 'POST':
+        username_intentado = request.POST.get('username', '').strip()
+        password_ingresada = request.POST.get('password', '').strip()
+        next_url = request.POST.get('next', '').strip() or request.GET.get('next', '').strip() or '/panel-admin/'
+
+        if username_intentado == ADMIN_USUARIO and password_ingresada == ADMIN_CLAVE:
+            request.session['admin_autenticado'] = True
+            request.session['admin_usuario'] = username_intentado
+            return redirect(next_url)
+        else:
+            error = "Credenciales incorrectas. Verifica tu usuario y contraseña."
+
+    return render(request, 'admin_login.html', {
+        'error': error,
+        'username_intentado': username_intentado
+    })
+
+
+def logout_admin_view(request):
+    """
+    Cierra la sesión del administrador limpiando las cookies de sesión
+    y redirige a la pantalla de login con mensaje de confirmación.
+    """
+    request.session.flush()
+    return redirect('/login/?cerrado=1')
 
 
 # ==============================================================================
@@ -148,6 +209,7 @@ def enviar_solicitud_view(request, id):
 # ==============================================================================
 # VISTA 5: PANEL DE ADMINISTRACIÓN DE SOLICITUDES (Mockup Página 11)
 # ==============================================================================
+@admin_requerido
 def panel_admin_view(request):
     """
     Vista del Administrador:
@@ -178,6 +240,7 @@ def panel_admin_view(request):
 # ==============================================================================
 # VISTA 6: ACCIÓN DE APROBAR O RECHAZAR SOLICITUD
 # ==============================================================================
+@admin_requerido
 def gestionar_solicitud_view(request, id_solicitud, accion):
     """
     Maneja la decisión del administrador:
@@ -196,6 +259,7 @@ def gestionar_solicitud_view(request, id_solicitud, accion):
 # ==============================================================================
 # VISTA 6.1: ACCIÓN DE ELIMINAR SOLICITUD DEFINITIVAMENTE DEL .TXT
 # ==============================================================================
+@admin_requerido
 def eliminar_solicitud_view(request, id_solicitud):
     """
     Elimina físicamente una solicitud del archivo data/solicitudes.txt.
@@ -207,6 +271,7 @@ def eliminar_solicitud_view(request, id_solicitud):
 # ==============================================================================
 # VISTA 7: INVENTARIO DE MASCOTAS PARA EL ADMINISTRADOR
 # ==============================================================================
+@admin_requerido
 def admin_mascotas_view(request):
     """
     Muestra la lista completa de mascotas en el refugio, incluyendo
@@ -229,6 +294,7 @@ def admin_mascotas_view(request):
 # ==============================================================================
 # VISTA 7.1: CAMBIAR ESTADO DE MASCOTA DIRECTAMENTE EN EL .TXT
 # ==============================================================================
+@admin_requerido
 def cambiar_estado_mascota_view(request, id_mascota, nuevo_estado):
     """
     Permite al administrador cambiar el estado de una mascota directamente
@@ -248,6 +314,7 @@ def cambiar_estado_mascota_view(request, id_mascota, nuevo_estado):
 # ==============================================================================
 # VISTA 7.2: ELIMINAR MASCOTA DEFINITIVAMENTE DEL .TXT
 # ==============================================================================
+@admin_requerido
 def eliminar_mascota_view(request, id_mascota):
     """
     Elimina físicamente una mascota del archivo data/mascotas.txt.
@@ -259,6 +326,7 @@ def eliminar_mascota_view(request, id_mascota):
 # ==============================================================================
 # VISTA 8: REGISTRAR NUEVA MASCOTA (RF1 - Mockup Página 12)
 # ==============================================================================
+@admin_requerido
 def registrar_mascota_view(request):
     """
     Maneja el registro de una nueva mascota rescatada:
