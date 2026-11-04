@@ -245,14 +245,15 @@ def gestionar_solicitud_view(request, id_solicitud, accion):
     """
     Maneja la decisión del administrador:
     - Si la acción es 'aprobar': el estado pasa a 'Aprobada' y la mascota pasa a 'Adoptada'.
-    - Si la acción es 'rechazar': el estado pasa a 'Rechazada' y la mascota sigue 'Disponible'.
+    - Si la acción es 'rechazar' o 'eliminar': se ELIMINA FÍSICAMENTE del archivo data/solicitudes.txt.
     """
     if accion.lower() == 'aprobar':
         storage.cambiar_estado_solicitud(id_solicitud, 'Aprobada')
-    elif accion.lower() == 'rechazar':
-        storage.cambiar_estado_solicitud(id_solicitud, 'Rechazada')
+        return redirect('panel_admin')
+    elif accion.lower() in ('rechazar', 'eliminar'):
+        storage.eliminar_solicitud(id_solicitud)
+        return redirect('/panel-admin/?solicitud_eliminada=1')
 
-    # Devolvemos al admin a su panel actualizado
     return redirect('panel_admin')
 
 

@@ -1,7 +1,4 @@
 id_solicitud,fecha,mascota_id,mascota_nombre,nombre_solicitante,cedula,telefono,correo,direccion,ciudad,vivienda,otras_mascotas,acuerdo_familiar,horas_solo,estado
-#SOL-2026,28/10/2026,1,Luna,Carlos Pérez,1144001,300 123 4567,carlos@mail.com,Calle 5 # 10-20,Cali,Casa con patio,No,Sí,4 horas,Aprobada
 #SOL-2025,27/10/2026,2,Milo,Ana Gómez,1144002,311 876 5432,ana@mail.com,Carrera 15 # 33-12,Cali,Apartamento,No,Sí,2 horas,Aprobada
-#SOL-2024,26/10/2026,3,Rocky,Luis Ramírez,1144003,320 555 1122,luis@mail.com,Avenida 6 # 22-50,Cali,Apartamento,Sí,No,8 horas,Rechazada
 #SOL-2023,25/10/2026,4,Nina,Sofía Herrera,1144004,315 444 9988,sofia@mail.com,Calle 9 # 45-80,Cali,Casa con patio,No,Sí,3 horas,Aprobada
-#SOL-2027,02/11/2026,1,Luna,Pedro,1233456678,31109323892,jjfnjd@dknkemn.com,Calle tal con carrera tan,Cali,Casa con patio,No,Sí,2 horas,Pendiente
-#SOL-2028,03/11/2026,2,Milo,oleo,121213221,333312,leitoayalafa0928@gmail.com,av2c,Cali,Casa con patio,No,Sí,4 horas,Rechazada
+#SOL-2029,04/11/2026,3,Rocky,Camila Torres,1144005,310 999 8877,camila@mail.com,Calle 14 # 80-20,Cali,Casa con patio,No,Sí,3 horas,Pendiente
