@@ -449,3 +449,27 @@ footer.mockup-footer a:hover {
     color: var(--dark-btn);
 }
 
+
+
+/* ==========================================================================
+   10. BADGES DE ESTADO EN TABLAS ADMINISTRATIVAS
+   ========================================================================== */
+.badge-estado-disponible {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+}
+
+.badge-estado-adoptada {
+    background-color: #f3e8ff !important;
+    color: #6b21a8 !important;
+}
+
+.badge-estado-tratamiento {
+    background-color: #fef9c3 !important;
+    color: #854d0e !important;
+}
+
+.badge-estado-otro {
+    background-color: #e5e7eb !important;
+    color: #374151 !important;
+}
