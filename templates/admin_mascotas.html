@@ -37,7 +37,15 @@
     </div>
     {% endif %}
 
-    {% if estado_actualizado == '1' %}
+        {% if mascota_editada == '1' %}
+    <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>¡Datos actualizados con éxito!</strong> Los cambios de la mascota se guardaron en <code>data/mascotas.txt</code>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+{% if estado_actualizado == '1' %}
     <div class="alert alert-info alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
         <i class="bi bi-arrow-repeat me-2"></i>
         <strong>¡Estado actualizado!</strong> El nuevo estado se sincronizó en <code>data/mascotas.txt</code>.
@@ -135,6 +143,9 @@
                             <div class="d-inline-flex gap-2">
                                 <a href="{% url 'detalle_mascota' m.id %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" target="_blank">
                                     <i class="bi bi-box-arrow-up-right me-1"></i> Ver Ficha
+                                </a>
+                                <a href="{% url 'editar_mascota' m.id %}" class="btn btn-sm btn-outline-dark rounded-pill px-3" title="Editar datos completos">
+                                    <i class="bi bi-pencil-square me-1"></i> Editar
                                 </a>
                                 <a href="{% url 'eliminar_mascota' m.id %}" 
                                    class="btn btn-sm btn-outline-danger rounded-pill px-3" 

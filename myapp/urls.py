@@ -33,7 +33,10 @@ urlpatterns = [
     path('panel-admin/mascota/<int:id_mascota>/estado/<str:nuevo_estado>/', views.cambiar_estado_mascota_view, name='cambiar_estado_mascota'),
 
     # 7.2 Acción para eliminar permanentemente una mascota del .txt
-    path('panel-admin/mascota/<int:id_mascota>/eliminar/', views.eliminar_mascota_view, name='eliminar_mascota'),
+    path('panel-admin/mascota/<int:id_mascota>/eliminar/', views.eliminar_mascota_view, name='eliminar_mascota'),
+
+    # 7.3 Acción para editar los datos completos de una mascota
+    path('panel-admin/mascota/<int:id_mascota>/editar/', views.editar_mascota_view, name='editar_mascota'),
 
     # 8. Formulario para registrar una nueva mascota rescatada (RF1)
     path('panel-admin/registrar-mascota/', views.registrar_mascota_view, name='registrar_mascota'),
