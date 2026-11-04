@@ -83,7 +83,7 @@ def actualizar_estado_mascota(id_mascota, nuevo_estado):
     modificado = False
 
     for m in mascotas:
-        if m['id'] == id_mascota:
+        if m['id'] == int(id_mascota):
             m['estado'] = nuevo_estado
             modificado = True
             break
@@ -95,6 +95,26 @@ def actualizar_estado_mascota(id_mascota, nuevo_estado):
             for m in mascotas:
                 escritor.writerow(m)
     return modificado
+
+
+def eliminar_mascota(id_mascota):
+    """
+    Elimina físicamente una mascota del archivo mascotas.txt.
+    Filtra la lista en memoria y reescribe el archivo completo sin esa fila.
+    Retorna True si fue eliminada exitosamente, False si no existía.
+    """
+    mascotas = leer_todas_las_mascotas()
+    inicial = len(mascotas)
+    mascotas_filtradas = [m for m in mascotas if m['id'] != int(id_mascota)]
+
+    if len(mascotas_filtradas) < inicial:
+        with open(RUTA_MASCOTAS, mode='w', encoding='utf-8', newline='') as archivo:
+            escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_MASCOTAS)
+            escritor.writeheader()
+            for m in mascotas_filtradas:
+                escritor.writerow(m)
+        return True
+    return False
 
 
 def guardar_nueva_mascota(datos):
@@ -248,6 +268,27 @@ def cambiar_estado_solicitud(id_solicitud_buscar, nuevo_estado):
             actualizar_estado_mascota(mascota_id_afectada, 'Adoptada')
 
     return encontrada
+
+
+def eliminar_solicitud(id_solicitud_buscar):
+    """
+    Elimina físicamente una solicitud de adopción de data/solicitudes.txt.
+    Filtra la lista en memoria y reescribe el archivo sin esa fila.
+    Retorna True si fue eliminada exitosamente, False si no existía.
+    """
+    solicitudes = leer_todas_las_solicitudes()
+    inicial = len(solicitudes)
+    id_limpio = str(id_solicitud_buscar).strip()
+    solicitudes_filtradas = [s for s in solicitudes if s['id_solicitud'] != id_limpio]
+
+    if len(solicitudes_filtradas) < inicial:
+        with open(RUTA_SOLICITUDES, mode='w', encoding='utf-8', newline='') as archivo:
+            escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_SOLICITUDES)
+            escritor.writeheader()
+            for sol in solicitudes_filtradas:
+                escritor.writerow(sol)
+        return True
+    return False
 
 
 # ==============================================================================

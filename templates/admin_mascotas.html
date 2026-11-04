@@ -20,11 +20,27 @@
         </a>
     </div>
 
-    <!-- MENSAJE DE ÉXITO TRAS REGISTRAR -->
+    <!-- MENSAJES DE ALERTA -->
     {% if mensaje_exito %}
     <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i>
         <strong>¡Mascota registrada con éxito!</strong> Se guardó como una nueva fila en <code>data/mascotas.txt</code> y ya está disponible en el catálogo.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    {% if mascota_eliminada == '1' %}
+    <div class="alert alert-warning alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi bi-trash3-fill me-2 text-danger"></i>
+        <strong>¡Mascota eliminada!</strong> La fila ha sido removida físicamente de <code>data/mascotas.txt</code>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    {% if estado_actualizado == '1' %}
+    <div class="alert alert-info alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi bi-arrow-repeat me-2"></i>
+        <strong>¡Estado actualizado!</strong> El nuevo estado se sincronizó en <code>data/mascotas.txt</code>.
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endif %}
@@ -89,26 +105,34 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if m.estado == 'Disponible' %}
-                            <span class="badge rounded-pill px-3 py-1" style="background-color: #dcfce7; color: #166534;">
-                                ✓ Disponible
-                            </span>
-                            {% elif m.estado == 'Adoptada' %}
-                            <span class="badge rounded-pill px-3 py-1" style="background-color: #f3e8ff; color: #6b21a8;">
-                                ❤️ Adoptada
-                            </span>
-                            {% elif m.estado == 'En Tratamiento' %}
-                            <span class="badge rounded-pill px-3 py-1" style="background-color: #fef9c3; color: #854d0e;">
-                                🩺 En Tratamiento
-                            </span>
-                            {% else %}
-                            <span class="badge bg-secondary rounded-pill px-3 py-1">{{ m.estado }}</span>
-                            {% endif %}
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                        style="{% if m.estado == 'Disponible' %}background-color: #dcfce7; color: #166534;{% elif m.estado == 'Adoptada' %}background-color: #f3e8ff; color: #6b21a8;{% elif m.estado == 'En Tratamiento' %}background-color: #fef9c3; color: #854d0e;{% else %}background-color: #e5e7eb; color: #374151;{% endif %}">
+                                    {% if m.estado == 'Disponible' %}✓ Disponible
+                                    {% elif m.estado == 'Adoptada' %}❤️ Adoptada
+                                    {% elif m.estado == 'En Tratamiento' %}🩺 En Tratamiento
+                                    {% else %}{{ m.estado }}{% endif %}
+                                </button>
+                                <ul class="dropdown-menu shadow-sm border-0 rounded-3">
+                                    <li><h6 class="dropdown-header small text-muted">Cambiar estado a:</h6></li>
+                                    <li><a class="dropdown-item small" href="{% url 'cambiar_estado_mascota' m.id 'disponible' %}"><i class="bi bi-check-circle text-success me-2"></i>Disponible</a></li>
+                                    <li><a class="dropdown-item small" href="{% url 'cambiar_estado_mascota' m.id 'en-tratamiento' %}"><i class="bi bi-bandaid text-warning me-2"></i>En Tratamiento</a></li>
+                                    <li><a class="dropdown-item small" href="{% url 'cambiar_estado_mascota' m.id 'adoptada' %}"><i class="bi bi-heart-fill text-purple me-2" style="color: #6b21a8;"></i>Adoptada</a></li>
+                                </ul>
+                            </div>
                         </td>
                         <td class="text-end pe-4">
-                            <a href="{% url 'detalle_mascota' m.id %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" target="_blank">
-                                <i class="bi bi-box-arrow-up-right me-1"></i> Ver Ficha
-                            </a>
+                            <div class="d-inline-flex gap-2">
+                                <a href="{% url 'detalle_mascota' m.id %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" target="_blank">
+                                    <i class="bi bi-box-arrow-up-right me-1"></i> Ver Ficha
+                                </a>
+                                <a href="{% url 'eliminar_mascota' m.id %}" 
+                                   class="btn btn-sm btn-outline-danger rounded-pill px-3" 
+                                   title="Eliminar permanentemente de mascotas.txt"
+                                   onclick="return confirm('¿Confirmas que deseas ELIMINAR DEFINITIVAMENTE a {{ m.nombre }}? La mascota se borrará físicamente del archivo data/mascotas.txt.');">
+                                    <i class="bi bi-trash3 me-1"></i> Eliminar
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}

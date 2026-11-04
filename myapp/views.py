@@ -153,10 +153,11 @@ def panel_admin_view(request):
     Vista del Administrador:
     - Muestra métricas rápidas (Total solicitudes, pendientes, disponibles, aprobadas).
     - Muestra la tabla completa de solicitudes leídas desde solicitudes.txt.
-    - Permite revisar las respuestas y aprobar o rechazar cada solicitud.
+    - Permite revisar las respuestas, aprobar, rechazar o eliminar solicitudes.
     """
     solicitudes = storage.leer_todas_las_solicitudes()
     mascotas = storage.leer_todas_las_mascotas()
+    solicitud_eliminada = request.GET.get('solicitud_eliminada', '')
 
     # Métricas calculadas para las tarjetas superiores del mockup
     total_solicitudes = len(solicitudes)
@@ -170,6 +171,7 @@ def panel_admin_view(request):
         'pendientes': pendientes,
         'disponibles': disponibles,
         'adopciones_completas': adopciones_completas,
+        'solicitud_eliminada': solicitud_eliminada,
     })
 
 
@@ -192,6 +194,17 @@ def gestionar_solicitud_view(request, id_solicitud, accion):
 
 
 # ==============================================================================
+# VISTA 6.1: ACCIÓN DE ELIMINAR SOLICITUD DEFINITIVAMENTE DEL .TXT
+# ==============================================================================
+def eliminar_solicitud_view(request, id_solicitud):
+    """
+    Elimina físicamente una solicitud del archivo data/solicitudes.txt.
+    """
+    eliminada = storage.eliminar_solicitud(id_solicitud)
+    return redirect('/panel-admin/?solicitud_eliminada=' + ('1' if eliminada else '0'))
+
+
+# ==============================================================================
 # VISTA 7: INVENTARIO DE MASCOTAS PARA EL ADMINISTRADOR
 # ==============================================================================
 def admin_mascotas_view(request):
@@ -201,12 +214,46 @@ def admin_mascotas_view(request):
     """
     mascotas = storage.leer_todas_las_mascotas()
     mensaje_exito = request.GET.get('guardado', '')
+    mascota_eliminada = request.GET.get('mascota_eliminada', '')
+    estado_actualizado = request.GET.get('estado_actualizado', '')
 
     return render(request, 'admin_mascotas.html', {
         'mascotas': mascotas,
         'total_mascotas': len(mascotas),
-        'mensaje_exito': mensaje_exito
+        'mensaje_exito': mensaje_exito,
+        'mascota_eliminada': mascota_eliminada,
+        'estado_actualizado': estado_actualizado,
     })
+
+
+# ==============================================================================
+# VISTA 7.1: CAMBIAR ESTADO DE MASCOTA DIRECTAMENTE EN EL .TXT
+# ==============================================================================
+def cambiar_estado_mascota_view(request, id_mascota, nuevo_estado):
+    """
+    Permite al administrador cambiar el estado de una mascota directamente
+    ('Disponible', 'En Tratamiento', 'Adoptada') y guardarlo en data/mascotas.txt.
+    """
+    mapa_estados = {
+        'disponible': 'Disponible',
+        'tratamiento': 'En Tratamiento',
+        'en-tratamiento': 'En Tratamiento',
+        'adoptada': 'Adoptada'
+    }
+    estado_normalizado = mapa_estados.get(nuevo_estado.lower(), nuevo_estado)
+    storage.actualizar_estado_mascota(id_mascota, estado_normalizado)
+    return redirect('/panel-admin/mascotas/?estado_actualizado=1')
+
+
+# ==============================================================================
+# VISTA 7.2: ELIMINAR MASCOTA DEFINITIVAMENTE DEL .TXT
+# ==============================================================================
+def eliminar_mascota_view(request, id_mascota):
+    """
+    Elimina físicamente una mascota del archivo data/mascotas.txt.
+    """
+    eliminada = storage.eliminar_mascota(id_mascota)
+    return redirect('/panel-admin/mascotas/?mascota_eliminada=' + ('1' if eliminada else '0'))
 
 
 # ==============================================================================
