@@ -4,3 +4,4 @@ id_solicitud,fecha,mascota_id,mascota_nombre,nombre_solicitante,cedula,telefono,
 #SOL-2024,26/10/2026,3,Rocky,Luis Ramírez,1144003,320 555 1122,luis@mail.com,Avenida 6 # 22-50,Cali,Apartamento,Sí,No,8 horas,Rechazada
 #SOL-2023,25/10/2026,4,Nina,Sofía Herrera,1144004,315 444 9988,sofia@mail.com,Calle 9 # 45-80,Cali,Casa con patio,No,Sí,3 horas,Pendiente
 #SOL-2027,02/11/2026,1,Luna,Pedro,1233456678,31109323892,jjfnjd@dknkemn.com,Calle tal con carrera tan,Cali,Casa con patio,No,Sí,2 horas,Pendiente
+#SOL-2029,04/11/2026,3,Rocky,Camila Torres,1144005,310 999 8877,camila@mail.com,Calle 14 # 80-20,Cali,Casa con patio,No,Sí,3 horas,Aprobada
