@@ -145,17 +145,20 @@ def detalle_mascota_view(request, id):
     Muestra la información completa de una mascota según su ID.
     Si la persona llega justo después de enviar una solicitud,
     recibe un parámetro 'solicitud_exitosa' para mostrarle su código de trámite.
+    Si intentó enviar sin aceptar términos, recibe 'error_terminos'.
     """
     mascota = storage.buscar_mascota_por_id(id)
     if not mascota:
         raise Http404(f"No encontramos la mascota con el identificador #{id}.")
 
-    # Leemos si viene algún código de solicitud reciente en la URL
+    # Leemos si viene algún código de solicitud reciente o alerta de error en la URL
     codigo_tramite = request.GET.get('solicitud_creada', '')
+    error_terminos = request.GET.get('error_terminos', '')
 
     return render(request, 'detalle_mascota.html', {
         'mascota': mascota,
-        'codigo_tramite': codigo_tramite
+        'codigo_tramite': codigo_tramite,
+        'error_terminos': error_terminos,
     })
 
 
@@ -166,6 +169,7 @@ def enviar_solicitud_view(request, id):
     """
     Recibe por método POST los datos ingresados en el formulario de postulación
     y los almacena como una nueva línea en data/solicitudes.txt.
+    Valida obligatoriamente que se hayan aceptado los términos y condiciones de adopción.
     Luego redirige al usuario mostrándole su código de confirmación.
     """
     mascota = storage.buscar_mascota_por_id(id)
@@ -173,6 +177,11 @@ def enviar_solicitud_view(request, id):
         raise Http404("La mascota seleccionada no existe.")
 
     if request.method == 'POST':
+        # Validación de Términos y Condiciones obligatorios
+        acepta_terminos = request.POST.get('acepta_terminos')
+        if not acepta_terminos:
+            return redirect(f"/mascota/{mascota['id']}/?error_terminos=1")
+
         # Extraemos los datos que escribió la persona en el formulario
         datos_formulario = {
             'mascota_id': mascota['id'],
@@ -212,6 +221,7 @@ def panel_admin_view(request):
     """
     solicitudes = storage.leer_todas_las_solicitudes()
     mascotas = storage.leer_todas_las_mascotas()
+    solicitud_eliminada = request.GET.get('solicitud_eliminada', '')
 
     # Métricas calculadas para las tarjetas superiores del mockup
     total_solicitudes = len(solicitudes)
@@ -225,6 +235,7 @@ def panel_admin_view(request):
         'pendientes': pendientes,
         'disponibles': disponibles,
         'adopciones_completas': adopciones_completas,
+        'solicitud_eliminada': solicitud_eliminada,
     })
 
 
@@ -237,14 +248,30 @@ def gestionar_solicitud_view(request, id_solicitud, accion):
     Maneja la decisión del administrador:
     - Si la acción es 'aprobar': el estado pasa a 'Aprobada' y la mascota pasa a 'Adoptada'.
     - Si la acción es 'rechazar': el estado pasa a 'Rechazada' y la mascota sigue 'Disponible'.
+    - Si la acción es 'eliminar': se elimina físicamente de data/solicitudes.txt.
     """
     if accion.lower() == 'aprobar':
         storage.cambiar_estado_solicitud(id_solicitud, 'Aprobada')
     elif accion.lower() == 'rechazar':
         storage.cambiar_estado_solicitud(id_solicitud, 'Rechazada')
+    elif accion.lower() == 'eliminar':
+        storage.eliminar_solicitud(id_solicitud)
+        return redirect('/panel-admin/?solicitud_eliminada=1')
 
     # Devolvemos al admin a su panel actualizado
     return redirect('panel_admin')
+
+
+# ==============================================================================
+# VISTA 6.1: ACCIÓN DE ELIMINAR SOLICITUD DEFINITIVAMENTE DEL .TXT
+# ==============================================================================
+@admin_requerido
+def eliminar_solicitud_view(request, id_solicitud):
+    """
+    Elimina físicamente una solicitud del archivo data/solicitudes.txt.
+    """
+    eliminada = storage.eliminar_solicitud(id_solicitud)
+    return redirect('/panel-admin/?solicitud_eliminada=' + ('1' if eliminada else '0'))
 
 
 # ==============================================================================
@@ -258,12 +285,48 @@ def admin_mascotas_view(request):
     """
     mascotas = storage.leer_todas_las_mascotas()
     mensaje_exito = request.GET.get('guardado', '')
+    mascota_eliminada = request.GET.get('mascota_eliminada', '')
+    estado_actualizado = request.GET.get('estado_actualizado', '')
 
     return render(request, 'admin_mascotas.html', {
         'mascotas': mascotas,
         'total_mascotas': len(mascotas),
-        'mensaje_exito': mensaje_exito
+        'mensaje_exito': mensaje_exito,
+        'mascota_eliminada': mascota_eliminada,
+        'estado_actualizado': estado_actualizado,
     })
+
+
+# ==============================================================================
+# VISTA 7.1: CAMBIAR ESTADO DE MASCOTA DIRECTAMENTE EN EL .TXT
+# ==============================================================================
+@admin_requerido
+def cambiar_estado_mascota_view(request, id_mascota, nuevo_estado):
+    """
+    Permite al administrador cambiar el estado de una mascota directamente
+    ('Disponible', 'En Tratamiento', 'Adoptada') y guardarlo en data/mascotas.txt.
+    """
+    mapa_estados = {
+        'disponible': 'Disponible',
+        'tratamiento': 'En Tratamiento',
+        'en-tratamiento': 'En Tratamiento',
+        'adoptada': 'Adoptada'
+    }
+    estado_normalizado = mapa_estados.get(nuevo_estado.lower(), nuevo_estado)
+    storage.actualizar_estado_mascota(id_mascota, estado_normalizado)
+    return redirect('/panel-admin/mascotas/?estado_actualizado=1')
+
+
+# ==============================================================================
+# VISTA 7.2: ELIMINAR MASCOTA DEFINITIVAMENTE DEL .TXT
+# ==============================================================================
+@admin_requerido
+def eliminar_mascota_view(request, id_mascota):
+    """
+    Elimina físicamente una mascota del archivo data/mascotas.txt.
+    """
+    eliminada = storage.eliminar_mascota(id_mascota)
+    return redirect('/panel-admin/mascotas/?mascota_eliminada=' + ('1' if eliminada else '0'))
 
 
 # ==============================================================================

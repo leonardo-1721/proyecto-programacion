@@ -87,14 +87,14 @@
                     <h2 class="modal-title fs-5 fw-bold mb-2" id="logoutConfirmModalLabel">¿Cerrar sesión?</h2>
                     <p class="text-muted mb-0">¿Estás seguro de que deseas salir de tu sesión administrativa?</p>
                 </div>
-                <div class="modal-footer border-0 pt-2 justify-content-start">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <div class="modal-footer border-0 pt-2 d-flex justify-content-between w-100">
                     <form method="post" action="{% url 'logout_admin' %}" class="m-0">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger rounded-pill px-4">
                             <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> Cerrar sesión
                         </button>
                     </form>
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </div>
         </div>

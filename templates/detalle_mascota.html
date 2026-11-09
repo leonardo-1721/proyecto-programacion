@@ -20,6 +20,20 @@
     </div>
     {% endif %}
 
+    <!-- ALERTA SI NO SE ACEPTARON LOS TÉRMINOS Y CONDICIONES -->
+    {% if error_terminos %}
+    <div class="alert alert-danger alert-dismissible fade show border-0 rounded-4 shadow-sm p-4 mb-4" role="alert">
+        <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-shield-exclamation fs-2 text-danger"></i>
+            <div>
+                <strong class="d-block text-danger fs-6">No se pudo procesar la solicitud</strong>
+                <span class="text-dark small">Para postularte debes leer y aceptar obligatoriamente los <strong>términos y condiciones de adopción responsable</strong> para asegurar el bienestar de la mascota.</span>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endif %}
+
     <!-- Migas de pan del Wireframe: Inicio > Catálogo > [Nombre] -->
     <div class="mockup-breadcrumb mb-4">
         <a href="{% url 'home' %}">Inicio</a>
@@ -256,13 +270,19 @@
                         </div>
                     </div>
 
-                    <!-- 3. Compromiso -->
-                    <div class="mb-4 bg-light p-3 rounded-3 border">
-                        <h6 class="fw-bold text-dark mb-2">3 · Compromiso</h6>
-                        <div class="form-check small text-muted">
-                            <input class="form-check-input" type="checkbox" id="compromiso" required checked>
-                            <label class="form-check-label" for="compromiso">
-                                Acepto los términos de tenencia responsable y me comprometo al cuidado integral del animal.
+                    <!-- 3. Compromiso y Términos y Condiciones -->
+                    <div class="mb-4 bg-light p-3 rounded-4 border">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h6 class="fw-bold text-dark mb-0">3 · Compromiso y Términos de Adopción</h6>
+                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 small" style="font-size: 0.72rem;">Obligatorio</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            En Huellitas del Valle velamos por la protección y dignidad animal. Para continuar, debes aceptar el acuerdo de adopción responsable.
+                        </p>
+                        <div class="form-check small">
+                            <input class="form-check-input" type="checkbox" name="acepta_terminos" id="acepta_terminos" value="si" required>
+                            <label class="form-check-label text-dark" for="acepta_terminos">
+                                He leído, comprendo y acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#modalTerminosCondiciones" class="text-decoration-underline fw-bold text-dark">términos y condiciones de adopción</a> y me comprometo al cuidado integral de {{ mascota.nombre }}. *
                             </label>
                         </div>
                     </div>
@@ -280,6 +300,104 @@
                 </div>
 
             </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================
+     MODAL DE TÉRMINOS Y CONDICIONES DE ADOPCIÓN RESPONSABLE
+     ======================================================================== -->
+<div class="modal fade" id="modalTerminosCondiciones" tabindex="-1" aria-labelledby="modalTerminosLabel" aria-hidden="true" style="z-index: 1060; background-color: rgba(0,0,0,0.45);">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+            
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle" 
+                         style="width: 48px; height: 48px; background-color: var(--mint-badge-bg); color: var(--mint-badge-text);">
+                        <i class="bi bi-shield-check fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark" id="modalTerminosLabel">
+                            Términos y Condiciones de Adopción Responsable
+                        </h5>
+                        <span class="text-muted small">Fundación Huellitas del Valle · Cali, Colombia</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body p-4 pt-3">
+                <p class="text-secondary small mb-3">
+                    Adoptar una mascota es un compromiso voluntario, legal y ético durante toda la vida del animal. Al postularte a la adopción en Huellitas del Valle, aceptas cumplir a cabalidad las siguientes cláusulas de bienestar:
+                </p>
+
+                <div class="list-group list-group-flush small">
+                    <div class="list-group-item px-0 py-3 border-bottom">
+                        <strong class="d-block text-dark mb-1">
+                            <i class="bi bi-heart-fill text-danger me-1"></i> 1. Cuidado Integral y Condiciones Dignas
+                        </strong>
+                        <span class="text-muted">
+                            El adoptante se compromete a brindarle alimentación nutritiva y adecuada a su especie, agua limpia y fresca de forma permanente, un espacio seguro y protegido de la intemperie (frío, lluvia o sol directo) y momentos diarios de recreación, ejercicio y afecto.
+                        </span>
+                    </div>
+
+                    <div class="list-group-item px-0 py-3 border-bottom">
+                        <strong class="d-block text-dark mb-1">
+                            <i class="bi bi-capsule text-primary me-1"></i> 2. Atención Médica y Salud Preventiva
+                        </strong>
+                        <span class="text-muted">
+                            Garantizar atención médica veterinaria oportuna cuando la mascota lo requiera. Mantener al día su esquema anual de vacunas, desparasitación interna y externa periódica, y acudir a controles regulares.
+                        </span>
+                    </div>
+
+                    <div class="list-group-item px-0 py-3 border-bottom">
+                        <strong class="d-block text-dark mb-1">
+                            <i class="bi bi-slash-circle-fill text-warning me-1"></i> 3. Esterilización Obligatoria
+                        </strong>
+                        <span class="text-muted">
+                            Si la mascota es entregada cachorra o pendiente de esterilización por criterio veterinario, el adoptante asume el compromiso obligatorio de esterilizarla en la fecha acordada para evitar la sobrepoblación y el abandono.
+                        </span>
+                    </div>
+
+                    <div class="list-group-item px-0 py-3 border-bottom">
+                        <strong class="d-block text-dark mb-1">
+                            <i class="bi bi-x-octagon-fill text-danger me-1"></i> 4. Prohibición de Abandono, Maltrato o Lucro
+                        </strong>
+                        <span class="text-muted">
+                            Bajo ninguna circunstancia la mascota podrá ser abandonada, amarrada permanentemente, maltratada física o psicológicamente, cedida para fines comerciales o de laboratorio, o vendida a terceros. La adopción es exclusivamente para compañía familiar.
+                        </span>
+                    </div>
+
+                    <div class="list-group-item px-0 py-3 border-bottom">
+                        <strong class="d-block text-dark mb-1">
+                            <i class="bi bi-camera-reels-fill text-success me-1"></i> 5. Acompañamiento y Seguimiento
+                        </strong>
+                        <span class="text-muted">
+                            El adoptante autoriza a la Fundación Huellitas del Valle a realizar un seguimiento voluntario y respetuoso de adaptación mediante fotografías, videos periódicos o visitas domiciliarias concertadas.
+                        </span>
+                    </div>
+
+                    <div class="list-group-item px-0 py-3">
+                        <strong class="d-block text-dark mb-1">
+                            <i class="bi bi-arrow-return-left text-info me-1"></i> 6. Devolución Responsable
+                        </strong>
+                        <span class="text-muted">
+                            En el caso fortuito o de fuerza mayor en que el adoptante no pueda continuar haciéndose cargo del animal, deberá contactar de inmediato a Huellitas del Valle para coordinar su reingreso al refugio, absteniéndose de regalarlo o entregarlo a terceros sin previa autorización.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex justify-content-between">
+                <button type="button" class="btn btn-mockup-light rounded-pill px-4" data-bs-dismiss="modal">
+                    Volver al Formulario
+                </button>
+                <button type="button" class="btn btn-mockup-dark rounded-pill px-4 shadow-sm" data-bs-dismiss="modal" onclick="var chk = document.getElementById('acepta_terminos'); if(chk){ chk.checked = true; }">
+                    <i class="bi bi-check2-circle me-1"></i> Entendido y Aceptar Términos
+                </button>
+            </div>
 
         </div>
     </div>
