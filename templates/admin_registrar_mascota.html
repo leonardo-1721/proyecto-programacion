@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Registrar Nueva Mascota | Panel Administrativo{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5" style="max-width: 900px;">
+
+    <!-- MENÚ SUPERIOR DEL ADMINISTRADOR (Pestañas de Navegación) -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a href="{% url 'panel_admin' %}" class="btn btn-mockup-light btn-sm">
+            <i class="bi bi-inbox me-1"></i> Solicitudes de Adopción
+        </a>
+        <a href="{% url 'admin_mascotas' %}" class="btn btn-mockup-light btn-sm">
+            <i class="bi bi-list-task me-1"></i> Mascotas Registradas
+        </a>
+        <a href="{% url 'registrar_mascota' %}" class="btn btn-mockup-dark btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> Registrar Nueva Mascota
+        </a>
+    </div>
+
+    <!-- TARJETA DEL FORMULARIO (Fiel al Wireframe de la Página 12) -->
+    <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+        
+        <!-- ENCABEZADO OSCURO DEL WIREFRAME: "Registrar Nueva Mascota en el Sistema" -->
+        <div class="p-3 text-center text-white" style="background-color: var(--dark-btn);">
+            <h4 class="fw-bold mb-0" style="font-size: 1.25rem;">Registrar Nueva Mascota en el Sistema</h4>
+        </div>
+
+        <div class="p-4 p-md-5">
+            <form method="POST" action="{% url 'registrar_mascota' %}">
+                {% csrf_token %}
+
+                <!-- 1. Nombre de la Mascota -->
+                <div class="mb-4">
+                    <label class="form-label small text-muted fw-bold text-uppercase">Nombre de la mascota *</label>
+                    <input type="text" name="nombre" class="form-control rounded-pill px-4 py-2" placeholder="Ej. Luna" required>
+                </div>
+
+                <!-- 2. Especie y Sexo (Fila del Wireframe) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Especie *</label>
+                        <select name="especie" class="form-select mockup-select w-100" required>
+                            <option value="Perro" selected>Perro</option>
+                            <option value="Gato">Gato</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Sexo *</label>
+                        <select name="sexo" class="form-select mockup-select w-100" required>
+                            <option value="Hembra" selected>Hembra</option>
+                            <option value="Macho">Macho</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 3. Edad y Estado Inicial (Fila del Wireframe) -->
+                <div class="row g-3 mb-4">
+                    <!-- Edad (Número + Unidad) -->
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Edad *</label>
+                        <div class="input-group">
+                            <input type="number" name="edad_numero" class="form-control rounded-start-pill px-3" value="1" min="1" max="25" required>
+                            <select name="edad_unidad" class="form-select rounded-end-pill mockup-select" style="max-width: 130px;">
+                                <option value="años" selected>Años</option>
+                                <option value="meses">Meses</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Estado Inicial -->
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Estado inicial *</label>
+                        <select name="estado" class="form-select mockup-select w-100" required>
+                            <option value="Disponible" selected>Disponible (Visible en catálogo)</option>
+                            <option value="En Tratamiento">En Tratamiento (Médico / Cuarentena)</option>
+                            <option value="No Disponible">No Disponible</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 4. Raza, Tamaño y Peso (Datos complementarios de ficha) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Raza</label>
+                        <input type="text" name="raza" class="form-control rounded-pill px-3 py-2" placeholder="Ej. Criollo / Mestizo" value="Mestizo">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Tamaño</label>
+                        <select name="tamano" class="form-select mockup-select w-100">
+                            <option value="Pequeño">Pequeño</option>
+                            <option value="Mediano" selected>Mediano</option>
+                            <option value="Grande">Grande</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Peso aprox.</label>
+                        <input type="text" name="peso" class="form-control rounded-pill px-3 py-2" placeholder="Ej. 12 kg" value="12 kg">
+                    </div>
+                </div>
+
+                <!-- 5. Vacunación -->
+                <div class="mb-4 bg-light p-3 rounded-4 border">
+                    <label class="form-label small text-muted fw-bold text-uppercase d-block mb-2">Esquema de Vacunación</label>
+                    <div class="d-flex gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="vacunado" id="vac_si" value="si" checked>
+                            <label class="form-check-label small" for="vac_si">Al día (Vacunado y desparasitado)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="vacunado" id="vac_no" value="no">
+                            <label class="form-check-label small" for="vac_no">En proceso / Pendiente</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Historia y Rasgos de Personalidad (Textarea del Wireframe) -->
+                <div class="mb-4">
+                    <label class="form-label small text-muted fw-bold text-uppercase">Historia y Personalidad *</label>
+                    <textarea name="descripcion" class="form-control rounded-4 p-3" rows="4" placeholder="Escribe aquí la historia de la mascota, su rescate y rasgos de personalidad..." required></textarea>
+                </div>
+
+                <!-- 7. Fotografía de la Mascota (Caja del Wireframe) -->
+                <div class="mb-5">
+                    <label class="form-label small text-muted fw-bold text-uppercase">Fotografía de la mascota</label>
+                    <div class="border rounded-4 p-4 text-center" style="background-color: var(--bg-subtle);">
+                        <i class="bi bi-image fs-1 text-muted d-block mb-2"></i>
+                        <p class="small text-muted mb-2">Pega la URL de una imagen web o deja vacío para usar una foto por defecto según la especie.</p>
+                        <input type="url" name="foto_url" class="form-control rounded-pill px-3 py-2 mx-auto" style="max-width: 500px;" placeholder="https://ejemplo.com/foto-mascota.jpg">
+                    </div>
+                </div>
+
+                <!-- 8. Botones de Acción (Wireframe Página 12) -->
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                    <button type="submit" class="btn btn-mockup-dark flex-grow-1 py-3 fw-bold">
+                        Guardar y Publicar Mascota
+                    </button>
+                    <a href="{% url 'admin_mascotas' %}" class="btn btn-mockup-light px-4 py-3 text-center">
+                        Cancelar / Descartar
+                    </a>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+

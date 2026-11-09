@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de Control · Solicitudes de Adopción{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5">
+
+    <!-- MENÚ SUPERIOR DEL ADMINISTRADOR (Pestañas de Navegación) -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'panel_admin' %}" class="btn btn-mockup-dark btn-sm">
+                <i class="bi bi-inbox me-1"></i> Solicitudes de Adopción
+            </a>
+            <a href="{% url 'admin_mascotas' %}" class="btn btn-mockup-light btn-sm">
+                <i class="bi bi-list-task me-1"></i> Mascotas Registradas
+            </a>
+        </div>
+        <a href="{% url 'registrar_mascota' %}" class="btn btn-mockup-dark btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> + Registrar Nueva Mascota
+        </a>
+    </div>
+
+    <!-- ENCABEZADO DEL ADMINISTRADOR (Mockup Página 11) -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <span class="badge bg-dark rounded-pill px-3 py-1 mb-2">Panel Administrativo</span>
+            <h2 class="fw-bold text-dark mb-0">Gestión de Solicitudes de Adopción</h2>
+            <p class="text-muted small mb-0">
+                Revisa las postulaciones recibidas, evalúa el perfil del adoptante y aprueba, rechaza o elimina solicitudes.
+            </p>
+        </div>
+        <div class="text-md-end">
+            <span class="small text-muted d-block">Sesión activa como:</span>
+            <div class="d-flex align-items-center justify-content-md-end gap-2 mt-1">
+                <strong class="text-dark"><i class="bi bi-person-check-fill text-success me-1"></i> Admin: Huellitas del Valle</strong>
+                <a href="{% url 'logout_admin' %}" class="btn btn-outline-danger btn-sm rounded-pill px-2 py-0" style="font-size: 0.78rem;" title="Cerrar sesión">
+                    <i class="bi bi-box-arrow-right me-1"></i> Salir
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENSAJE DE ÉXITO TRAS ELIMINAR -->
+    {% if solicitud_eliminada == '1' %}
+    <div class="alert alert-warning alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi bi-trash3-fill me-2 text-danger"></i>
+        <strong>¡Solicitud eliminada!</strong> La fila ha sido borrada físicamente de <code>data/solicitudes.txt</code>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <!-- TARJETAS DE MÉTRICAS (Mockup Página 11: Total, Pendientes, Disponibles, Completas) -->
+    <div class="row g-3 mb-5">
+        <!-- Total Solicitudes -->
+        <div class="col-6 col-md-3">
+            <div class="card border-0 rounded-4 p-3 bg-white shadow-sm h-100">
+                <span class="text-muted small fw-semibold">Total Solicitudes</span>
+                <span class="display-6 fw-bold text-dark mt-2">{{ total_solicitudes }}</span>
+            </div>
+        </div>
+
+        <!-- Pendientes de Revisión -->
+        <div class="col-6 col-md-3">
+            <div class="card border-0 rounded-4 p-3 shadow-sm h-100" style="background-color: #fef9c3;">
+                <span class="text-muted small fw-semibold">Pendientes de Revisión</span>
+                <span class="display-6 fw-bold mt-2" style="color: #854d0e;">{{ pendientes }}</span>
+            </div>
+        </div>
+
+        <!-- Mascotas Disponibles -->
+        <div class="col-6 col-md-3">
+            <div class="card border-0 rounded-4 p-3 shadow-sm h-100" style="background-color: #dcfce7;">
+                <span class="text-muted small fw-semibold">Mascotas Disponibles</span>
+                <span class="display-6 fw-bold mt-2" style="color: #166534;">{{ disponibles }}</span>
+            </div>
+        </div>
+
+        <!-- Adopciones Completas -->
+        <div class="col-6 col-md-3">
+            <div class="card border-0 rounded-4 p-3 shadow-sm h-100" style="background-color: #f3e8ff;">
+                <span class="text-muted small fw-semibold">Adopciones Completas</span>
+                <span class="display-6 fw-bold mt-2" style="color: #6b21a8;">{{ adopciones_completas }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA DE SOLICITUDES DE ADOPCIÓN (Mockup Página 11) -->
+    <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden mb-5">
+        
+        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-dark mb-0">Solicitudes de Adopción Registradas</h5>
+            <span class="badge bg-secondary bg-opacity-10 text-dark rounded-pill px-3 py-1 font-monospace">
+                Persistencia: data/solicitudes.txt
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background-color: var(--bg-subtle); font-size: 0.8rem; text-transform: uppercase; color: #706c66;">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Fecha</th>
+                        <th>Mascota</th>
+                        <th>Solicitante</th>
+                        <th>Contacto</th>
+                        <th>Estado</th>
+                        <th class="text-end pe-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sol in solicitudes %}
+                    <tr>
+                        <td class="ps-4 font-monospace fw-bold text-dark">{{ sol.id_solicitud }}</td>
+                        <td class="small text-muted">{{ sol.fecha }}</td>
+                        <td>
+                            <strong class="text-dark">{{ sol.mascota_nombre }}</strong>
+                            <span class="small text-muted">#M-10{{ sol.mascota_id }}</span>
+                        </td>
+                        <td class="fw-semibold text-dark">{{ sol.nombre_solicitante }}</td>
+                        <td class="small">{{ sol.telefono }}</td>
+                        <td>
+                            {% if sol.estado == 'Pendiente' %}
+                                <span class="badge rounded-pill px-3 py-1" style="background-color: #fef08a; color: #713f12;">
+                                    Pendiente
+                                </span>
+                            {% elif sol.estado == 'Aprobada' %}
+                                <span class="badge rounded-pill px-3 py-1" style="background-color: #bbf7d0; color: #14532d;">
+                                    ✓ Aprobada
+                                </span>
+                            {% elif sol.estado == 'Rechazada' %}
+                                <span class="badge rounded-pill px-3 py-1" style="background-color: #fecaca; color: #7f1d1d;">
+                                    ✕ Rechazada
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-pill px-3 py-1">{{ sol.estado }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-inline-flex gap-1">
+                                <!-- Botón Ver Detalle -->
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-secondary rounded-pill px-3" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modal-{{ forloop.counter }}">
+                                    Ver
+                                </button>
+
+                                <!-- Botón Aprobar -->
+                                <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'aprobar' %}" 
+                                   class="btn btn-sm btn-success rounded-circle" 
+                                   title="Aprobar solicitud (Mascota pasará a Adoptada)"
+                                   onclick="return confirm('¿Confirmas que deseas APROBAR la solicitud {{ sol.id_solicitud }} para {{ sol.mascota_nombre }}? La mascota se retirará del catálogo público.');">
+                                    ✓
+                                </a>
+
+                                <!-- Botón Eliminar / Rechazar físicamente del .txt -->
+                                <a href="{% url 'eliminar_solicitud' sol.id_solicitud %}" 
+                                   class="btn btn-sm btn-danger rounded-circle" 
+                                   title="Eliminar solicitud permanentemente de data/solicitudes.txt"
+                                   onclick="return confirm('¿Confirmas que deseas ELIMINAR la solicitud {{ sol.id_solicitud }}? Se borrará físicamente del archivo data/solicitudes.txt.');">
+                                    ✕
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- ========================================================
+                         MODAL DE DETALLE PARA CADA SOLICITUD (Mockup Página 11)
+                         ======================================================== -->
+                    <div class="modal fade" id="modal-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content border-0 rounded-4 shadow">
+                                
+                                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                                    <div>
+                                        <h5 class="fw-bold mb-1 text-dark">
+                                            Solicitud {{ sol.id_solicitud }} · {{ sol.mascota_nombre }} #M-10{{ sol.mascota_id }}
+                                        </h5>
+                                        <p class="text-muted small mb-0">
+                                            Solicitante: <strong>{{ sol.nombre_solicitante }}</strong> · Tel: {{ sol.telefono }} · Correo: {{ sol.correo }}
+                                        </p>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+
+                                <div class="modal-body p-4">
+                                    
+                                    <h6 class="fw-bold text-dark mb-3">Respuestas del Adoptante:</h6>
+                                    <ul class="list-group list-group-flush small mb-4">
+                                        <li class="list-group-item d-flex justify-content-between px-0">
+                                            <span class="text-muted">Documento / Cédula:</span>
+                                            <span class="fw-semibold text-dark">{{ sol.cedula }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between px-0">
+                                            <span class="text-muted">Dirección & Ciudad:</span>
+                                            <span class="fw-semibold text-dark">{{ sol.direccion }} ({{ sol.ciudad }})</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between px-0">
+                                            <span class="text-muted">Tipo de vivienda:</span>
+                                            <span class="fw-semibold text-dark">{{ sol.vivienda }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between px-0">
+                                            <span class="text-muted">¿Otras mascotas en casa?:</span>
+                                            <span class="fw-semibold text-dark">{{ sol.otras_mascotas }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between px-0">
+                                            <span class="text-muted">¿Acuerdo familiar completo?:</span>
+                                            <span class="fw-semibold text-dark">{{ sol.acuerdo_familiar }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between px-0">
+                                            <span class="text-muted">Horas al día que pasará solo:</span>
+                                            <span class="fw-semibold text-dark">{{ sol.horas_solo }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between px-0">
+                                            <span class="text-muted">Estado actual de la solicitud:</span>
+                                            <span class="badge bg-secondary">{{ sol.estado }}</span>
+                                        </li>
+                                    </ul>
+
+                                    <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                                        <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'aprobar' %}" 
+                                           class="btn btn-mockup-dark flex-grow-1 py-2">
+                                            ✓ Aprobar Solicitud
+                                        </a>
+                                        <a href="{% url 'eliminar_solicitud' sol.id_solicitud %}" 
+                                           class="btn btn-danger flex-grow-1 py-2"
+                                           onclick="return confirm('¿Confirmas que deseas ELIMINAR la solicitud {{ sol.id_solicitud }}? Se borrará permanentemente de data/solicitudes.txt.');">
+                                            <i class="bi bi-trash3 me-1"></i> Eliminar Solicitud
+                                        </a>
+                                        <button type="button" class="btn btn-mockup-light px-4" data-bs-dismiss="modal">
+                                            Cerrar
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary opacity-50"></i>
+                            No hay solicitudes de adopción registradas aún en <code>solicitudes.txt</code>.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+

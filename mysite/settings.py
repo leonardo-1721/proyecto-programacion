@@ -116,8 +116,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ==============================================================================
+# MOTOR DE SESIONES (RNF4: Cero bases de datos SQL)
+# Usamos cookies criptográficamente firmadas por Django para almacenar la sesión
+# del administrador de forma segura sin requerir tablas en db.sqlite3.
+# ==============================================================================
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 86400  # 1 día de sesión

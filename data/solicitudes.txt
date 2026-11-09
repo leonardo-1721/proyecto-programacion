@@ -1,0 +1,4 @@
+id_solicitud,fecha,mascota_id,mascota_nombre,nombre_solicitante,cedula,telefono,correo,direccion,ciudad,vivienda,otras_mascotas,acuerdo_familiar,horas_solo,estado
+#SOL-2025,27/10/2026,2,Milo,Ana Gómez,1144002,311 876 5432,ana@mail.com,Carrera 15 # 33-12,Cali,Apartamento,No,Sí,2 horas,Aprobada
+#SOL-2023,25/10/2026,4,Nina,Sofía Herrera,1144004,315 444 9988,sofia@mail.com,Calle 9 # 45-80,Cali,Casa con patio,No,Sí,3 horas,Aprobada
+#SOL-2029,04/11/2026,3,Rocky,Camila Torres,1144005,310 999 8877,camila@mail.com,Calle 14 # 80-20,Cali,Casa con patio,No,Sí,3 horas,Pendiente
