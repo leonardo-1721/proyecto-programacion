@@ -1,7 +1,62 @@
+from functools import wraps
 from urllib.parse import quote
 from django.shortcuts import render, redirect
 from django.http import Http404
+from django.utils.http import url_has_allowed_host_and_scheme
 from . import storage
+
+
+ADMIN_USUARIO = 'admin'
+ADMIN_CLAVE = 'huellitas2026'
+
+
+def admin_requerido(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('admin_autenticado'):
+            next_url = quote(request.get_full_path(), safe='')
+            return redirect(f'/login/?next={next_url}')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+def login_admin_view(request):
+    if request.session.get('admin_autenticado'):
+        return redirect('panel_admin')
+
+    error = None
+    username_intentado = ''
+    next_url = request.GET.get('next', '').strip()
+
+    if request.method == 'POST':
+        username_intentado = request.POST.get('username', '').strip()
+        password_ingresada = request.POST.get('password', '').strip()
+        next_url = request.POST.get('next', '').strip() or next_url
+
+        if username_intentado == ADMIN_USUARIO and password_ingresada == ADMIN_CLAVE:
+            request.session['admin_autenticado'] = True
+            request.session['admin_usuario'] = username_intentado
+            if url_has_allowed_host_and_scheme(
+                next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                return redirect(next_url)
+            return redirect('panel_admin')
+
+        error = 'Credenciales incorrectas. Verifica tu usuario y contraseña.'
+
+    return render(request, 'admin_login.html', {
+        'error': error,
+        'username_intentado': username_intentado,
+        'next_url': next_url,
+    })
+
+
+def logout_admin_view(request):
+    if request.method == 'POST':
+        request.session.flush()
+    return redirect('login_admin')
 
 
 # ==============================================================================
@@ -148,6 +203,7 @@ def enviar_solicitud_view(request, id):
 # ==============================================================================
 # VISTA 5: PANEL DE ADMINISTRACIÓN DE SOLICITUDES (Mockup Página 11)
 # ==============================================================================
+@admin_requerido
 def panel_admin_view(request):
     """
     Vista del Administrador:
@@ -176,6 +232,7 @@ def panel_admin_view(request):
 # ==============================================================================
 # VISTA 6: ACCIÓN DE APROBAR O RECHAZAR SOLICITUD
 # ==============================================================================
+@admin_requerido
 def gestionar_solicitud_view(request, id_solicitud, accion):
     """
     Maneja la decisión del administrador:
@@ -194,6 +251,7 @@ def gestionar_solicitud_view(request, id_solicitud, accion):
 # ==============================================================================
 # VISTA 7: INVENTARIO DE MASCOTAS PARA EL ADMINISTRADOR
 # ==============================================================================
+@admin_requerido
 def admin_mascotas_view(request):
     """
     Muestra la lista completa de mascotas en el refugio, incluyendo
@@ -212,6 +270,7 @@ def admin_mascotas_view(request):
 # ==============================================================================
 # VISTA 8: REGISTRAR NUEVA MASCOTA (RF1 - Mockup Página 12)
 # ==============================================================================
+@admin_requerido
 def registrar_mascota_view(request):
     """
     Maneja el registro de una nueva mascota rescatada:

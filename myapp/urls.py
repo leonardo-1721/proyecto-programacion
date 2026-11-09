@@ -5,6 +5,9 @@ from . import views
 # ENRUTADOR DE LA APLICACIÓN (URLs limpias y semánticas)
 # ==============================================================================
 urlpatterns = [
+    path('login/', views.login_admin_view, name='login_admin'),
+    path('logout/', views.logout_admin_view, name='logout_admin'),
+
     # 1. Página de inicio pública
     path('', views.inicio_view, name='home'),
 
