@@ -8,7 +8,7 @@
     <!-- MENSAJE DE CONFIRMACIÓN SI SE ACABA DE ENVIAR LA SOLICITUD (Mockup Página 10) -->
     {% if codigo_tramite %}
     <div class="alert text-center p-4 rounded-4 mb-5 shadow-sm border-0" style="background-color: #fef3c7; color: #78350f;">
-        <div class="fs-1 mb-2">🎉</div>
+        <div class="fs-1 mb-2 text-warning"><i class="bi bi-check-circle-fill"></i></div>
         <h3 class="fw-bold mb-2">¡Solicitud registrada con éxito!</h3>
         <p class="mb-3" style="font-size: 1.05rem;">
             Tu código de trámite es <strong class="badge bg-dark text-white px-3 py-2 rounded-pill fs-6">{{ codigo_tramite }}</strong>.<br>
@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            <!-- Banner Verde Menta de Estado Veterinario: ✓ Vacunación al día - Esterilizada - Desparasitada -->
+            <!-- Banner Verde Menta de Estado Veterinario: Vacunación al día - Esterilizada - Desparasitada -->
             <div class="health-status-banner mb-4">
                 <i class="bi bi-check-lg"></i>
                 {% if mascota.vacunado %}
@@ -141,13 +141,13 @@
                 </button>
                 {% else %}
                 <div class="alert alert-secondary rounded-pill py-3 fw-bold mb-3">
-                    Esta mascota ya ha sido adoptada ❤️
+                    Esta mascota ya ha sido adoptada
                 </div>
                 {% endif %}
 
-                <!-- Enlace ← Volver al Catálogo -->
+                <!-- Enlace Volver al Catálogo -->
                 <a href="{% url 'catalogo' %}" class="link-back-catalog d-inline-flex align-items-center gap-1">
-                    ← Volver al Catálogo
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver al Catálogo
                 </a>
             </div>
 

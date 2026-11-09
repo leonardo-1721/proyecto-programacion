@@ -111,11 +111,11 @@
                                 </span>
                             {% elif sol.estado == 'Aprobada' %}
                                 <span class="badge rounded-pill px-3 py-1" style="background-color: #bbf7d0; color: #14532d;">
-                                    ✓ Aprobada
+                                    <i class="bi bi-check2 me-1"></i> Aprobada
                                 </span>
                             {% elif sol.estado == 'Rechazada' %}
                                 <span class="badge rounded-pill px-3 py-1" style="background-color: #fecaca; color: #7f1d1d;">
-                                    ✕ Rechazada
+                                    <i class="bi bi-x-lg me-1"></i> Rechazada
                                 </span>
                             {% else %}
                                 <span class="badge bg-secondary rounded-pill px-3 py-1">{{ sol.estado }}</span>
@@ -136,7 +136,7 @@
                                    class="btn btn-sm btn-success rounded-circle" 
                                    title="Aprobar solicitud (Mascota pasará a Adoptada)"
                                    onclick="return confirm('¿Confirmas que deseas APROBAR la solicitud {{ sol.id_solicitud }} para {{ sol.mascota_nombre }}? La mascota se retirará del catálogo público.');">
-                                    ✓
+                                    <i class="bi bi-check-lg"></i>
                                 </a>
 
                                 <!-- Botón Rechazar -->
@@ -144,7 +144,7 @@
                                    class="btn btn-sm btn-danger rounded-circle" 
                                    title="Rechazar solicitud"
                                    onclick="return confirm('¿Confirmas que deseas RECHAZAR la solicitud {{ sol.id_solicitud }}?');">
-                                    ✕
+                                    <i class="bi bi-x-lg"></i>
                                 </a>
                             </div>
                         </td>
@@ -206,11 +206,11 @@
                                     <div class="d-flex flex-wrap gap-2 pt-2 border-top">
                                         <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'aprobar' %}" 
                                            class="btn btn-mockup-dark flex-grow-1 py-2">
-                                            ✓ Aprobar Solicitud
+                                            <i class="bi bi-check-lg me-1"></i> Aprobar Solicitud
                                         </a>
                                         <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'rechazar' %}" 
                                            class="btn btn-outline-danger flex-grow-1 py-2">
-                                            ✕ Rechazar
+                                            <i class="bi bi-x-lg me-1"></i> Rechazar
                                         </a>
                                         <button type="button" class="btn btn-mockup-light px-4" data-bs-dismiss="modal">
                                             Cerrar

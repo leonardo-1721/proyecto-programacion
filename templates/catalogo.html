@@ -50,7 +50,7 @@
                 <!-- Especie -->
                 <div class="col-6 col-md-3">
                     <select name="especie" class="form-select mockup-select" aria-label="Especie">
-                        <option value="" {% if not especie_actual %}selected{% endif %}>Especie ▾</option>
+                        <option value="" {% if not especie_actual %}selected{% endif %}>Especie</option>
                         <option value="Perro" {% if especie_actual == 'Perro' %}selected{% endif %}>Perro</option>
                         <option value="Gato" {% if especie_actual == 'Gato' %}selected{% endif %}>Gato</option>
                     </select>
@@ -59,7 +59,7 @@
                 <!-- Tamaño -->
                 <div class="col-6 col-md-2">
                     <select name="tamano" class="form-select mockup-select" aria-label="Tamaño">
-                        <option value="" {% if not tamano_actual %}selected{% endif %}>Tamaño ▾</option>
+                        <option value="" {% if not tamano_actual %}selected{% endif %}>Tamaño</option>
                         <option value="Pequeño" {% if tamano_actual == 'Pequeño' %}selected{% endif %}>Pequeño</option>
                         <option value="Mediano" {% if tamano_actual == 'Mediano' %}selected{% endif %}>Mediano</option>
                         <option value="Grande" {% if tamano_actual == 'Grande' %}selected{% endif %}>Grande</option>
@@ -69,7 +69,7 @@
                 <!-- Sexo -->
                 <div class="col-6 col-md-2">
                     <select name="sexo" class="form-select mockup-select" aria-label="Sexo">
-                        <option value="" {% if not sexo_actual %}selected{% endif %}>Sexo ▾</option>
+                        <option value="" {% if not sexo_actual %}selected{% endif %}>Sexo</option>
                         <option value="Hembra" {% if sexo_actual == 'Hembra' %}selected{% endif %}>Hembra</option>
                         <option value="Macho" {% if sexo_actual == 'Macho' %}selected{% endif %}>Macho</option>
                     </select>
