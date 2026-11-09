@@ -54,8 +54,7 @@ def login_admin_view(request):
 
 
 def logout_admin_view(request):
-    if request.method == 'POST':
-        request.session.flush()
+    request.session.flush()
     return redirect('login_admin')
 
 
