@@ -37,14 +37,22 @@
     </div>
     {% endif %}
 
-        {% if mascota_editada == '1' %}
-    <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i>
-        <strong>¡Datos actualizados con éxito!</strong> Los cambios de la mascota se guardaron en <code>data/mascotas.txt</code>.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endif %}
-
+        {% if mascota_editada == '1' %}
+
+    <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+
+        <i class="bi bi-check-circle-fill me-2"></i>
+
+        <strong>¡Datos actualizados con éxito!</strong> Los cambios de la mascota se guardaron en <code>data/mascotas.txt</code>.
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+    </div>
+
+    {% endif %}
+
+
+
 {% if estado_actualizado == '1' %}
     <div class="alert alert-info alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
         <i class="bi bi-arrow-repeat me-2"></i>
@@ -65,7 +73,7 @@
             <span class="small text-muted d-block">Sesión activa como:</span>
             <div class="d-flex align-items-center justify-content-md-end gap-2 mt-1">
                 <strong class="text-dark"><i class="bi bi-person-check-fill text-success me-1"></i> Admin: Huellitas del Valle</strong>
-                <a href="{% url 'logout_admin' %}" class="btn btn-outline-danger btn-sm rounded-pill px-2 py-0" style="font-size: 0.78rem;" title="Cerrar sesión">
+                <a href="{% url 'logout_admin' %}" class="btn btn-outline-danger btn-sm rounded-pill px-2 py-0" style="font-size: 0.78rem;" title="Cerrar sesión" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
                     <i class="bi bi-box-arrow-right me-1"></i> Salir
                 </a>
             </div>
