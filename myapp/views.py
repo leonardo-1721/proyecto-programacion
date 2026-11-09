@@ -94,7 +94,9 @@ def catalogo_view(request):
     - Tamaño (Pequeño, Mediano, Grande)
     - Sexo (Macho, Hembra)
     - Término de búsqueda escrito por el usuario en el buscador
-    
+
+    Incluye paginación real: 6 mascotas por página.
+
     REGLA DE NEGOCIO:
     Las mascotas que ya fueron adoptadas no aparecen en este catálogo.
     """
@@ -135,12 +137,34 @@ def catalogo_view(request):
                 texto_busqueda in m['especie'].lower())
         ]
 
+    # --- PAGINACIÓN ---
+    MASCOTAS_POR_PAGINA = 6
+    total_mascotas = len(resultados)
+    total_paginas = max(1, (total_mascotas + MASCOTAS_POR_PAGINA - 1) // MASCOTAS_POR_PAGINA)
+
+    try:
+        pagina_actual = int(request.GET.get('pagina', 1))
+    except ValueError:
+        pagina_actual = 1
+
+    # Clamp: la página no puede ser menor a 1 ni mayor al total
+    pagina_actual = max(1, min(pagina_actual, total_paginas))
+
+    inicio = (pagina_actual - 1) * MASCOTAS_POR_PAGINA
+    fin = inicio + MASCOTAS_POR_PAGINA
+    mascotas_pagina = resultados[inicio:fin]
+
     return render(request, 'catalogo.html', {
-        'mascotas': resultados,
+        'mascotas': mascotas_pagina,
         'especie_actual': especie_filtro,
         'sexo_actual': sexo_filtro,
         'tamano_actual': tamano_filtro,
         'query': query,
+        'pagina_actual': pagina_actual,
+        'total_paginas': total_paginas,
+        'paginas': range(1, total_paginas + 1),
+        'tiene_anterior': pagina_actual > 1,
+        'tiene_siguiente': pagina_actual < total_paginas,
     })
 
 
