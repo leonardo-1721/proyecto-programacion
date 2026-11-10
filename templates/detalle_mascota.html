@@ -8,7 +8,6 @@
     <!-- MENSAJE DE CONFIRMACIÓN SI SE ACABA DE ENVIAR LA SOLICITUD (Mockup Página 10) -->
     {% if codigo_tramite %}
     <div class="alert text-center p-4 rounded-4 mb-5 shadow-sm border-0" style="background-color: #fef3c7; color: #78350f;">
-        <div class="fs-1 mb-2 text-warning"><i class="bi bi-check-circle-fill"></i></div>
         <h3 class="fw-bold mb-2">¡Solicitud registrada con éxito!</h3>
         <p class="mb-3" style="font-size: 1.05rem;">
             Tu código de trámite es <strong class="badge bg-dark text-white px-3 py-2 rounded-pill fs-6">{{ codigo_tramite }}</strong>.<br>
@@ -23,12 +22,9 @@
     <!-- ALERTA SI NO SE ACEPTARON LOS TÉRMINOS Y CONDICIONES -->
     {% if error_terminos %}
     <div class="alert alert-danger alert-dismissible fade show border-0 rounded-4 shadow-sm p-4 mb-4" role="alert">
-        <div class="d-flex align-items-center gap-3">
-            <i class="bi bi-shield-exclamation fs-2 text-danger"></i>
-            <div>
-                <strong class="d-block text-danger fs-6">No se pudo procesar la solicitud</strong>
-                <span class="text-dark small">Para postularte debes leer y aceptar obligatoriamente los <strong>términos y condiciones de adopción responsable</strong> para asegurar el bienestar de la mascota.</span>
-            </div>
+        <div>
+            <strong class="d-block text-danger fs-6 mb-1">No se pudo procesar la solicitud</strong>
+            <span class="text-dark small">Para postularte debes leer y aceptar obligatoriamente los <strong>términos y condiciones de adopción responsable</strong> para asegurar el bienestar de la mascota.</span>
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
     </div>
@@ -313,17 +309,11 @@
         <div class="modal-content border-0 rounded-4 shadow-lg">
             
             <div class="modal-header border-0 pb-0 pt-4 px-4">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle" 
-                         style="width: 48px; height: 48px; background-color: var(--mint-badge-bg); color: var(--mint-badge-text);">
-                        <i class="bi bi-shield-check fs-4"></i>
-                    </div>
-                    <div>
-                        <h5 class="fw-bold mb-0 text-dark" id="modalTerminosLabel">
-                            Términos y Condiciones de Adopción Responsable
-                        </h5>
-                        <span class="text-muted small">Fundación Huellitas del Valle · Cali, Colombia</span>
-                    </div>
+                <div>
+                    <h5 class="fw-bold mb-1 text-dark" id="modalTerminosLabel">
+                        Términos y Condiciones de Adopción Responsable
+                    </h5>
+                    <span class="text-muted small">Fundación Huellitas del Valle · Cali, Colombia</span>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
@@ -336,7 +326,7 @@
                 <div class="list-group list-group-flush small">
                     <div class="list-group-item px-0 py-3 border-bottom">
                         <strong class="d-block text-dark mb-1">
-                            <i class="bi bi-heart-fill text-danger me-1"></i> 1. Cuidado Integral y Condiciones Dignas
+                            1. Cuidado Integral y Condiciones Dignas
                         </strong>
                         <span class="text-muted">
                             El adoptante se compromete a brindarle alimentación nutritiva y adecuada a su especie, agua limpia y fresca de forma permanente, un espacio seguro y protegido de la intemperie (frío, lluvia o sol directo) y momentos diarios de recreación, ejercicio y afecto.
@@ -345,7 +335,7 @@
 
                     <div class="list-group-item px-0 py-3 border-bottom">
                         <strong class="d-block text-dark mb-1">
-                            <i class="bi bi-capsule text-primary me-1"></i> 2. Atención Médica y Salud Preventiva
+                            2. Atención Médica y Salud Preventiva
                         </strong>
                         <span class="text-muted">
                             Garantizar atención médica veterinaria oportuna cuando la mascota lo requiera. Mantener al día su esquema anual de vacunas, desparasitación interna y externa periódica, y acudir a controles regulares.
@@ -354,7 +344,7 @@
 
                     <div class="list-group-item px-0 py-3 border-bottom">
                         <strong class="d-block text-dark mb-1">
-                            <i class="bi bi-slash-circle-fill text-warning me-1"></i> 3. Esterilización Obligatoria
+                            3. Esterilización Obligatoria
                         </strong>
                         <span class="text-muted">
                             Si la mascota es entregada cachorra o pendiente de esterilización por criterio veterinario, el adoptante asume el compromiso obligatorio de esterilizarla en la fecha acordada para evitar la sobrepoblación y el abandono.
@@ -363,7 +353,7 @@
 
                     <div class="list-group-item px-0 py-3 border-bottom">
                         <strong class="d-block text-dark mb-1">
-                            <i class="bi bi-x-octagon-fill text-danger me-1"></i> 4. Prohibición de Abandono, Maltrato o Lucro
+                            4. Prohibición de Abandono, Maltrato o Lucro
                         </strong>
                         <span class="text-muted">
                             Bajo ninguna circunstancia la mascota podrá ser abandonada, amarrada permanentemente, maltratada física o psicológicamente, cedida para fines comerciales o de laboratorio, o vendida a terceros. La adopción es exclusivamente para compañía familiar.
@@ -372,7 +362,7 @@
 
                     <div class="list-group-item px-0 py-3 border-bottom">
                         <strong class="d-block text-dark mb-1">
-                            <i class="bi bi-camera-reels-fill text-success me-1"></i> 5. Acompañamiento y Seguimiento
+                            5. Acompañamiento y Seguimiento
                         </strong>
                         <span class="text-muted">
                             El adoptante autoriza a la Fundación Huellitas del Valle a realizar un seguimiento voluntario y respetuoso de adaptación mediante fotografías, videos periódicos o visitas domiciliarias concertadas.
@@ -381,7 +371,7 @@
 
                     <div class="list-group-item px-0 py-3">
                         <strong class="d-block text-dark mb-1">
-                            <i class="bi bi-arrow-return-left text-info me-1"></i> 6. Devolución Responsable
+                            6. Devolución Responsable
                         </strong>
                         <span class="text-muted">
                             En el caso fortuito o de fuerza mayor en que el adoptante no pueda continuar haciéndose cargo del animal, deberá contactar de inmediato a Huellitas del Valle para coordinar su reingreso al refugio, absteniéndose de regalarlo o entregarlo a terceros sin previa autorización.
@@ -395,7 +385,7 @@
                     Volver al Formulario
                 </button>
                 <button type="button" class="btn btn-mockup-dark rounded-pill px-4 shadow-sm" data-bs-dismiss="modal" onclick="var chk = document.getElementById('acepta_terminos'); if(chk){ chk.checked = true; }">
-                    <i class="bi bi-check2-circle me-1"></i> Entendido y Aceptar Términos
+                    Aceptar Términos y Continuar
                 </button>
             </div>
 
