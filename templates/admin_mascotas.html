@@ -111,13 +111,23 @@
                         </td>
                         <td>
                             <div class="dropdown d-inline-block">
-                                <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                        style="{% if m.estado == 'Disponible' %}background-color: #dcfce7; color: #166534;{% elif m.estado == 'Adoptada' %}background-color: #f3e8ff; color: #6b21a8;{% elif m.estado == 'En Tratamiento' %}background-color: #fef9c3; color: #854d0e;{% else %}background-color: #e5e7eb; color: #374151;{% endif %}">
-                                    {% if m.estado == 'Disponible' %}<i class="bi bi-check2 me-1"></i> Disponible
-                                    {% elif m.estado == 'Adoptada' %}<i class="bi bi-heart me-1"></i> Adoptada
-                                    {% elif m.estado == 'En Tratamiento' %}<i class="bi bi-bandaid me-1"></i> En Tratamiento
-                                    {% else %}{{ m.estado }}{% endif %}
+                                {% if m.estado == 'Disponible' %}
+                                <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #dcfce7; color: #166534;">
+                                    <i class="bi bi-check2 me-1"></i> Disponible
                                 </button>
+                                {% elif m.estado == 'Adoptada' %}
+                                <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f3e8ff; color: #6b21a8;">
+                                    <i class="bi bi-heart me-1"></i> Adoptada
+                                </button>
+                                {% elif m.estado == 'En Tratamiento' %}
+                                <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #fef9c3; color: #854d0e;">
+                                    <i class="bi bi-bandaid me-1"></i> En Tratamiento
+                                </button>
+                                {% else %}
+                                <button class="btn btn-sm dropdown-toggle rounded-pill px-3 py-1 border-0 bg-secondary bg-opacity-25 text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ m.estado }}
+                                </button>
+                                {% endif %}
                                 <ul class="dropdown-menu shadow-sm border-0 rounded-3">
                                     <li><h6 class="dropdown-header small text-muted">Cambiar estado a:</h6></li>
                                     <li><a class="dropdown-item small" href="{% url 'cambiar_estado_mascota' m.id 'disponible' %}"><i class="bi bi-check2 text-success me-2"></i>Disponible</a></li>

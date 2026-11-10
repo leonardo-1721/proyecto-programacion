@@ -280,19 +280,35 @@ def guardar_nueva_solicitud(datos):
     return nuevo_codigo
 
 
+def buscar_solicitud_por_id(id_solicitud):
+    """
+    Busca una solicitud específica por su ID (#SOL-XXXX).
+    Retorna el diccionario con sus datos o None si no existe.
+    """
+    solicitudes = leer_todas_las_solicitudes()
+    id_limpio = str(id_solicitud).strip()
+    for sol in solicitudes:
+        if sol['id_solicitud'] == id_limpio:
+            return sol
+    return None
+
+
 def cambiar_estado_solicitud(id_solicitud_buscar, nuevo_estado):
     """
     Cambia el estado de una solicitud ('Aprobada' o 'Rechazada').
-    REGLA DE NEGOCIO CLAVE:
+    REGLA DE NEGOCIO CLAVE (Exclusividad de Adopción):
     - Si se APRUEBA:
-      1. La mascota asociada cambia su estado a 'Adoptada' en mascotas.txt
+      1. La mascota asociada cambia su estado a 'Adoptada' en data/mascotas.txt
          para que deje de mostrarse en el catálogo de adopción disponible.
-      2. Cualquier otra solicitud PENDIENTE para esta misma mascota se pasa
+      2. CUALQUIER OTRA solicitud para esta misma mascota se pasa
          automáticamente a 'Rechazada', porque la mascota ya tiene adoptante
          y no puede ser entregada a más de una persona.
-    - Si se RECHAZA, la mascota se mantiene como 'Disponible'.
+    - Si se RECHAZA:
+      - Si la solicitud rechazada era la que estaba 'Aprobada', comprobamos si
+        queda alguna otra aprobada; si no queda ninguna, la mascota regresa a 'Disponible'.
     """
     solicitudes = leer_todas_las_solicitudes()
+    id_solicitud_buscar = str(id_solicitud_buscar).strip()
     mascota_id_afectada = None
     encontrada = False
 
@@ -303,25 +319,31 @@ def cambiar_estado_solicitud(id_solicitud_buscar, nuevo_estado):
             encontrada = True
             break
 
-    if encontrada:
-        # Si fue aprobada, rechazamos automáticamente cualquier otra solicitud
-        # que estuviera pendiente para esta misma mascota
-        if nuevo_estado == 'Aprobada' and mascota_id_afectada:
+    if encontrada and mascota_id_afectada:
+        # Si fue aprobada, aplicamos la regla de exclusividad estricta:
+        if nuevo_estado == 'Aprobada':
             for sol in solicitudes:
                 if sol['mascota_id'] == mascota_id_afectada and sol['id_solicitud'] != id_solicitud_buscar:
-                    if sol['estado'] == 'Pendiente':
-                        sol['estado'] = 'Rechazada'
+                    sol['estado'] = 'Rechazada'
 
-        # 1. Reescribimos solicitudes.txt con los estados actualizados
+            # Actualizamos la mascota a 'Adoptada' en mascotas.txt
+            actualizar_estado_mascota(mascota_id_afectada, 'Adoptada')
+
+        elif nuevo_estado == 'Rechazada':
+            # Si se rechazó esta solicitud, verificamos si existe alguna otra solicitud Aprobada
+            otra_aprobada = any(
+                sol['mascota_id'] == mascota_id_afectada and sol['estado'] == 'Aprobada'
+                for sol in solicitudes
+            )
+            if not otra_aprobada:
+                actualizar_estado_mascota(mascota_id_afectada, 'Disponible')
+
+        # Reescribimos solicitudes.txt con los estados actualizados
         with open(RUTA_SOLICITUDES, mode='w', encoding='utf-8', newline='') as archivo:
             escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_SOLICITUDES)
             escritor.writeheader()
             for sol in solicitudes:
                 escritor.writerow(sol)
-
-        # 2. Si fue aprobada, actualizamos la mascota a 'Adoptada' en mascotas.txt
-        if nuevo_estado == 'Aprobada' and mascota_id_afectada:
-            actualizar_estado_mascota(mascota_id_afectada, 'Adoptada')
 
     return encontrada
 
@@ -330,11 +352,14 @@ def eliminar_solicitud(id_solicitud_buscar):
     """
     Elimina físicamente una solicitud de adopción de data/solicitudes.txt.
     Filtra la lista en memoria y reescribe el archivo sin esa fila.
+    Si la solicitud eliminada estaba Aprobada y no queda otra aprobada,
+    devuelve la mascota a 'Disponible'.
     Retorna True si fue eliminada exitosamente, False si no existía.
     """
     solicitudes = leer_todas_las_solicitudes()
     inicial = len(solicitudes)
     id_limpio = str(id_solicitud_buscar).strip()
+    solicitud_a_eliminar = next((s for s in solicitudes if s['id_solicitud'] == id_limpio), None)
     solicitudes_filtradas = [s for s in solicitudes if s['id_solicitud'] != id_limpio]
 
     if len(solicitudes_filtradas) < inicial:
@@ -343,7 +368,19 @@ def eliminar_solicitud(id_solicitud_buscar):
             escritor.writeheader()
             for sol in solicitudes_filtradas:
                 escritor.writerow(sol)
+
+        # Si la solicitud eliminada estaba Aprobada, verificamos si la mascota debe volver a 'Disponible'
+        if solicitud_a_eliminar and solicitud_a_eliminar.get('estado') == 'Aprobada':
+            mascota_id = solicitud_a_eliminar.get('mascota_id')
+            otra_aprobada = any(
+                s['mascota_id'] == mascota_id and s['estado'] == 'Aprobada'
+                for s in solicitudes_filtradas
+            )
+            if not otra_aprobada and mascota_id:
+                actualizar_estado_mascota(mascota_id, 'Disponible')
+
         return True
+
     return False
 
 

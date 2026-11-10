@@ -229,12 +229,23 @@ def panel_admin_view(request):
     solicitudes = storage.leer_todas_las_solicitudes()
     mascotas = storage.leer_todas_las_mascotas()
     solicitud_eliminada = request.GET.get('solicitud_eliminada', '')
+    solicitud_aprobada = request.GET.get('solicitud_aprobada', '')
+    solicitud_rechazada = request.GET.get('solicitud_rechazada', '')
+    error_ya_adoptada = request.GET.get('error_ya_adoptada', '')
+    solicitud_id_afectada = request.GET.get('solicitud_id', '')
 
     # Cruzamos el estado actual de cada mascota para saber si ya fue adoptada
     mascotas_dict = {m['id']: m for m in mascotas}
     for s in solicitudes:
         m = mascotas_dict.get(s['mascota_id'])
         s['mascota_estado'] = m['estado'] if m else 'Desconocido'
+        otra_aprobada = any(
+            otra['mascota_id'] == s['mascota_id']
+            and otra['id_solicitud'] != s['id_solicitud']
+            and otra['estado'] == 'Aprobada'
+            for otra in solicitudes
+        )
+        s['otra_solicitud_aprobada'] = otra_aprobada
 
     # Métricas calculadas para las tarjetas superiores del mockup
     total_solicitudes = len(solicitudes)
@@ -249,6 +260,10 @@ def panel_admin_view(request):
         'disponibles': disponibles,
         'adopciones_completas': adopciones_completas,
         'solicitud_eliminada': solicitud_eliminada,
+        'solicitud_aprobada': solicitud_aprobada,
+        'solicitud_rechazada': solicitud_rechazada,
+        'error_ya_adoptada': error_ya_adoptada,
+        'solicitud_id_afectada': solicitud_id_afectada,
     })
 
 
@@ -259,15 +274,38 @@ def panel_admin_view(request):
 def gestionar_solicitud_view(request, id_solicitud, accion):
     """
     Maneja la decisión del administrador:
-    - Si la acción es 'aprobar': el estado pasa a 'Aprobada' y la mascota pasa a 'Adoptada'.
-    - Si la acción es 'rechazar': el estado pasa a 'Rechazada' y la mascota sigue 'Disponible'.
+    - Si la acción es 'aprobar':
+      Valida si la mascota ya está otorgada a otra persona (solicitud aprobada previa).
+      Si ya está otorgada, previene la aprobación duplicada y muestra una alerta informativa.
+      De lo contrario, aprueba la solicitud, marca la mascota como 'Adoptada' y rechaza
+      automáticamente todas las demás solicitudes de esa mascota en data/solicitudes.txt.
+    - Si la acción es 'rechazar': el estado pasa a 'Rechazada'. Si no quedan otras solicitudes
+      aprobadas, la mascota regresa a 'Disponible'.
     - Si la acción es 'eliminar': se elimina físicamente de data/solicitudes.txt.
     """
-    if accion.lower() == 'aprobar':
+    accion_limpia = accion.lower()
+    if accion_limpia == 'aprobar':
+        solicitud_actual = storage.buscar_solicitud_por_id(id_solicitud)
+        if solicitud_actual:
+            todas = storage.leer_todas_las_solicitudes()
+            otra_aprobada = next((
+                s for s in todas
+                if s['mascota_id'] == solicitud_actual['mascota_id']
+                and s['id_solicitud'] != solicitud_actual['id_solicitud']
+                and s['estado'] == 'Aprobada'
+            ), None)
+
+            if otra_aprobada:
+                return redirect(f'/panel-admin/?error_ya_adoptada={quote(otra_aprobada["id_solicitud"], safe="")}&solicitud_id={quote(id_solicitud, safe="")}')
+
         storage.cambiar_estado_solicitud(id_solicitud, 'Aprobada')
-    elif accion.lower() == 'rechazar':
+        return redirect('/panel-admin/?solicitud_aprobada=1')
+
+    elif accion_limpia == 'rechazar':
         storage.cambiar_estado_solicitud(id_solicitud, 'Rechazada')
-    elif accion.lower() == 'eliminar':
+        return redirect('/panel-admin/?solicitud_rechazada=1')
+
+    elif accion_limpia == 'eliminar':
         storage.eliminar_solicitud(id_solicitud)
         return redirect('/panel-admin/?solicitud_eliminada=1')
 

@@ -35,7 +35,31 @@
         </div>
     </div>
 
-    <!-- MENSAJE DE ÉXITO TRAS ELIMINAR -->
+    <!-- ALERTAS DE RETROALIMENTACIÓN DE ACCIONES -->
+    {% if error_ya_adoptada %}
+    <div class="alert alert-danger alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi bi-exclamation-octagon-fill me-2"></i>
+        <strong>No se puede aprobar la solicitud {{ solicitud_id_afectada }}:</strong> Esta mascota ya fue otorgada y adoptada previamente mediante la solicitud <code>{{ error_ya_adoptada }}</code>. Cada mascota cuenta con un único adoptante exclusivo.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endif %}
+
+    {% if solicitud_aprobada == '1' %}
+    <div class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <strong>¡Solicitud aprobada con éxito!</strong> La mascota fue marcada como <strong>Adoptada</strong> en el sistema y retirada del catálogo. Las demás solicitudes para esta mascota fueron rechazadas automáticamente.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endif %}
+
+    {% if solicitud_rechazada == '1' %}
+    <div class="alert alert-info alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <strong>Solicitud rechazada.</strong> Se actualizó el estado en <code>data/solicitudes.txt</code>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endif %}
+
     {% if solicitud_eliminada == '1' %}
     <div class="alert alert-warning alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
         <i class="bi bi-trash3-fill me-2 text-danger"></i>
@@ -107,8 +131,14 @@
                         <td>
                             <strong class="text-dark">{{ sol.mascota_nombre }}</strong>
                             <span class="small text-muted">#M-10{{ sol.mascota_id }}</span>
-                            {% if sol.mascota_estado == 'Adoptada' and sol.estado != 'Aprobada' %}
-                            <span class="badge bg-secondary bg-opacity-10 text-muted ms-1" style="font-size: 0.72rem;">Ya Adoptada</span>
+                            {% if sol.mascota_estado == 'Adoptada' and sol.estado == 'Aprobada' %}
+                            <span class="badge bg-success bg-opacity-10 text-success ms-1" style="font-size: 0.72rem;">
+                                <i class="bi bi-check2"></i> Adoptante Oficial
+                            </span>
+                            {% elif sol.mascota_estado == 'Adoptada' and sol.estado != 'Aprobada' %}
+                            <span class="badge bg-secondary bg-opacity-10 text-muted ms-1" style="font-size: 0.72rem;">
+                                Ya Adoptada
+                            </span>
                             {% endif %}
                         </td>
                         <td class="fw-semibold text-dark">{{ sol.nombre_solicitante }}</td>
@@ -123,9 +153,15 @@
                                     <i class="bi bi-check2 me-1"></i> Aprobada
                                 </span>
                             {% elif sol.estado == 'Rechazada' %}
+                                {% if sol.mascota_estado == 'Adoptada' and sol.estado != 'Aprobada' %}
+                                <span class="badge rounded-pill px-3 py-1" style="background-color: #fecaca; color: #7f1d1d;" title="La mascota ya fue otorgada a otro solicitante">
+                                    <i class="bi bi-x-lg me-1"></i> Rechazada (Ya adoptada)
+                                </span>
+                                {% else %}
                                 <span class="badge rounded-pill px-3 py-1" style="background-color: #fecaca; color: #7f1d1d;">
                                     <i class="bi bi-x-lg me-1"></i> Rechazada
                                 </span>
+                                {% endif %}
                             {% else %}
                                 <span class="badge bg-secondary rounded-pill px-3 py-1">{{ sol.estado }}</span>
                             {% endif %}
@@ -142,14 +178,18 @@
 
                                 <!-- Botón Aprobar -->
                                 {% if sol.mascota_estado == 'Adoptada' and sol.estado != 'Aprobada' %}
-                                <button class="btn btn-sm btn-light border text-muted rounded-circle" disabled title="Esta mascota ya fue adoptada por otra persona">
+                                <button class="btn btn-sm btn-light border text-muted rounded-circle" disabled title="Esta mascota ya fue adoptada por otra persona y no puede otorgarse de nuevo">
                                     <i class="bi bi-lock-fill"></i>
+                                </button>
+                                {% elif sol.estado == 'Aprobada' %}
+                                <button class="btn btn-sm btn-success rounded-circle" disabled title="Esta solicitud ya está aprobada y tiene la mascota asignada">
+                                    <i class="bi bi-check-lg"></i>
                                 </button>
                                 {% else %}
                                 <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'aprobar' %}" 
                                    class="btn btn-sm btn-success rounded-circle" 
-                                   title="Aprobar solicitud (Mascota pasará a Adoptada y otras solicitudes se rechazarán)"
-                                   onclick="return confirm('¿Confirmas que deseas APROBAR la solicitud {{ sol.id_solicitud }} para {{ sol.mascota_nombre }}? La mascota se retirará del catálogo y las demás solicitudes para esta mascota se rechazarán.');">
+                                   title="Aprobar solicitud (Mascota pasará a Adoptada y otras solicitudes se rechazarán automáticamente)"
+                                   onclick="return confirm('¿Confirmas que deseas APROBAR la solicitud {{ sol.id_solicitud }} para {{ sol.mascota_nombre }}? La mascota se otorgará a este solicitante y las demás solicitudes para esta mascota se rechazarán automáticamente.');">
                                     <i class="bi bi-check-lg"></i>
                                 </a>
                                 {% endif %}
@@ -172,94 +212,6 @@
                             </div>
                         </td>
                     </tr>
-
-                    <!-- ========================================================
-                         MODAL DE DETALLE PARA CADA SOLICITUD (Mockup Página 11)
-                         ======================================================== -->
-                    <div class="modal fade" id="modal-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content border-0 rounded-4 shadow">
-                                
-                                <div class="modal-header border-0 pb-0 pt-4 px-4">
-                                    <div>
-                                        <h5 class="fw-bold mb-1 text-dark">
-                                            Solicitud {{ sol.id_solicitud }} · {{ sol.mascota_nombre }} #M-10{{ sol.mascota_id }}
-                                        </h5>
-                                        <p class="text-muted small mb-0">
-                                            Solicitante: <strong>{{ sol.nombre_solicitante }}</strong> · Tel: {{ sol.telefono }} · Correo: {{ sol.correo }}
-                                        </p>
-                                    </div>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                </div>
-
-                                <div class="modal-body p-4">
-                                    
-                                    <h6 class="fw-bold text-dark mb-3">Respuestas del Adoptante:</h6>
-                                    <ul class="list-group list-group-flush small mb-4">
-                                        <li class="list-group-item d-flex justify-content-between px-0">
-                                            <span class="text-muted">Documento / Cédula:</span>
-                                            <span class="fw-semibold text-dark">{{ sol.cedula }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between px-0">
-                                            <span class="text-muted">Dirección & Ciudad:</span>
-                                            <span class="fw-semibold text-dark">{{ sol.direccion }} ({{ sol.ciudad }})</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between px-0">
-                                            <span class="text-muted">Tipo de vivienda:</span>
-                                            <span class="fw-semibold text-dark">{{ sol.vivienda }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between px-0">
-                                            <span class="text-muted">¿Otras mascotas en casa?:</span>
-                                            <span class="fw-semibold text-dark">{{ sol.otras_mascotas }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between px-0">
-                                            <span class="text-muted">¿Acuerdo familiar completo?:</span>
-                                            <span class="fw-semibold text-dark">{{ sol.acuerdo_familiar }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between px-0">
-                                            <span class="text-muted">Horas al día que pasará solo:</span>
-                                            <span class="fw-semibold text-dark">{{ sol.horas_solo }}</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between px-0">
-                                            <span class="text-muted">Estado actual de la solicitud:</span>
-                                            <span class="badge bg-secondary">{{ sol.estado }}</span>
-                                        </li>
-                                    </ul>
-
-                                    <div class="d-flex flex-wrap gap-2 pt-2 border-top">
-                                        {% if sol.mascota_estado == 'Adoptada' and sol.estado != 'Aprobada' %}
-                                        <button class="btn btn-secondary flex-grow-1 py-2" disabled title="Esta mascota ya fue adoptada por otra persona">
-                                            Mascota ya Adoptada
-                                        </button>
-                                        {% else %}
-                                        <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'aprobar' %}" 
-                                           class="btn btn-mockup-dark flex-grow-1 py-2"
-                                           onclick="return confirm('¿Confirmas que deseas APROBAR la solicitud {{ sol.id_solicitud }} para {{ sol.mascota_nombre }}? La mascota pasará a Adoptada y otras solicitudes se rechazarán.');">
-                                            <i class="bi bi-check-lg me-1"></i> Aprobar Solicitud
-                                        </a>
-                                        {% endif %}
-                                        <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'rechazar' %}" 
-                                           class="btn btn-outline-danger flex-grow-1 py-2"
-                                           onclick="return confirm('¿Confirmas que deseas RECHAZAR la solicitud {{ sol.id_solicitud }}?');">
-                                            <i class="bi bi-x-lg me-1"></i> Rechazar
-                                        </a>
-                                        <a href="{% url 'eliminar_solicitud' sol.id_solicitud %}" 
-                                           class="btn btn-danger py-2 px-3"
-                                           title="Eliminar permanentemente de solicitudes.txt"
-                                           onclick="return confirm('¿Confirmas que deseas ELIMINAR DEFINITIVAMENTE la solicitud {{ sol.id_solicitud }}? Se borrará por completo de solicitudes.txt.');">
-                                            <i class="bi bi-trash3 me-1"></i> Eliminar
-                                        </a>
-                                        <button type="button" class="btn btn-mockup-light px-4" data-bs-dismiss="modal">
-                                            Cerrar
-                                        </button>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
                     {% empty %}
                     <tr>
                         <td colspan="7" class="text-center py-5 text-muted">
@@ -274,6 +226,99 @@
 
     </div>
 
+    <!-- ========================================================
+         MODALES DE DETALLE PARA CADA SOLICITUD (Mockup Página 11)
+         Ubicados fuera de la tabla para respetar la jerarquía HTML válida
+         ======================================================== -->
+    {% for sol in solicitudes %}
+    <div class="modal fade" id="modal-{{ forloop.counter }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow">
+                
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark">
+                            Solicitud {{ sol.id_solicitud }} · {{ sol.mascota_nombre }} #M-10{{ sol.mascota_id }}
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            Solicitante: <strong>{{ sol.nombre_solicitante }}</strong> · Tel: {{ sol.telefono }} · Correo: {{ sol.correo }}
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    
+                    <h6 class="fw-bold text-dark mb-3">Respuestas del Adoptante:</h6>
+                    <ul class="list-group list-group-flush small mb-4">
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Documento / Cédula:</span>
+                            <span class="fw-semibold text-dark">{{ sol.cedula }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Dirección & Ciudad:</span>
+                            <span class="fw-semibold text-dark">{{ sol.direccion }} ({{ sol.ciudad }})</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Tipo de vivienda:</span>
+                            <span class="fw-semibold text-dark">{{ sol.vivienda }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">¿Otras mascotas en casa?:</span>
+                            <span class="fw-semibold text-dark">{{ sol.otras_mascotas }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">¿Acuerdo familiar completo?:</span>
+                            <span class="fw-semibold text-dark">{{ sol.acuerdo_familiar }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Horas al día que pasará solo:</span>
+                            <span class="fw-semibold text-dark">{{ sol.horas_solo }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Estado actual de la solicitud:</span>
+                            <span class="badge bg-secondary">{{ sol.estado }}</span>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex flex-wrap gap-2 pt-2 border-top">
+                        {% if sol.mascota_estado == 'Adoptada' and sol.estado != 'Aprobada' %}
+                        <button class="btn btn-secondary flex-grow-1 py-2" disabled title="Esta mascota ya fue adoptada por otra persona">
+                            <i class="bi bi-lock-fill me-1"></i> Mascota ya adoptada por otro solicitante
+                        </button>
+                        {% elif sol.estado == 'Aprobada' %}
+                        <button class="btn btn-success flex-grow-1 py-2" disabled>
+                            <i class="bi bi-check-circle-fill me-1"></i> Solicitud Aprobada (Adoptante Oficial)
+                        </button>
+                        {% else %}
+                        <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'aprobar' %}" 
+                           class="btn btn-mockup-dark flex-grow-1 py-2"
+                           onclick="return confirm('¿Confirmas que deseas APROBAR la solicitud {{ sol.id_solicitud }} para {{ sol.mascota_nombre }}? La mascota se otorgará a este solicitante y las demás solicitudes para esta mascota se rechazarán automáticamente.');">
+                            <i class="bi bi-check-lg me-1"></i> Aprobar Solicitud
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'gestionar_solicitud' sol.id_solicitud 'rechazar' %}" 
+                           class="btn btn-outline-danger flex-grow-1 py-2"
+                           onclick="return confirm('¿Confirmas que deseas RECHAZAR la solicitud {{ sol.id_solicitud }}?');">
+                            <i class="bi bi-x-lg me-1"></i> Rechazar
+                        </a>
+                        <a href="{% url 'eliminar_solicitud' sol.id_solicitud %}" 
+                           class="btn btn-danger py-2 px-3"
+                           title="Eliminar permanentemente de solicitudes.txt"
+                           onclick="return confirm('¿Confirmas que deseas ELIMINAR DEFINITIVAMENTE la solicitud {{ sol.id_solicitud }}? Se borrará por completo de solicitudes.txt.');">
+                            <i class="bi bi-trash3 me-1"></i> Eliminar
+                        </a>
+                        <button type="button" class="btn btn-mockup-light px-4" data-bs-dismiss="modal">
+                            Cerrar
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
 </div>
 {% endblock %}
-
