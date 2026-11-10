@@ -97,6 +97,50 @@ def actualizar_estado_mascota(id_mascota, nuevo_estado):
     return modificado
 
 
+def actualizar_datos_mascota(id_mascota, datos):
+    """
+    Actualiza todos los datos de una mascota existente (nombre, especie, raza, edad, sexo,
+    tamaño, peso, foto, descripción, vacunación, estado) y reescribe data/mascotas.txt.
+    """
+    mascotas = leer_todas_las_mascotas()
+    modificado = False
+
+    for m in mascotas:
+        if m['id'] == int(id_mascota):
+            if datos.get('nombre'):
+                m['nombre'] = datos['nombre'].strip()
+            if datos.get('especie'):
+                m['especie'] = datos['especie'].strip()
+            if datos.get('raza'):
+                m['raza'] = datos['raza'].strip()
+            if datos.get('edad'):
+                m['edad'] = datos['edad'].strip()
+            if datos.get('sexo'):
+                m['sexo'] = datos['sexo'].strip()
+            if datos.get('tamano'):
+                m['tamano'] = datos['tamano'].strip()
+            if datos.get('peso'):
+                m['peso'] = datos['peso'].strip()
+            if datos.get('foto_url'):
+                m['foto_url'] = datos['foto_url'].strip()
+            if 'descripcion' in datos:
+                m['descripcion'] = datos['descripcion'].strip()
+            if 'vacunado' in datos:
+                m['vacunado'] = bool(datos['vacunado'])
+            if datos.get('estado'):
+                m['estado'] = datos['estado'].strip()
+            modificado = True
+            break
+
+    if modificado:
+        with open(RUTA_MASCOTAS, mode='w', encoding='utf-8', newline='') as archivo:
+            escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_MASCOTAS)
+            escritor.writeheader()
+            for m in mascotas:
+                escritor.writerow(m)
+    return modificado
+
+
 def eliminar_mascota(id_mascota):
     """
     Elimina físicamente una mascota del archivo data/mascotas.txt.
@@ -240,8 +284,12 @@ def cambiar_estado_solicitud(id_solicitud_buscar, nuevo_estado):
     """
     Cambia el estado de una solicitud ('Aprobada' o 'Rechazada').
     REGLA DE NEGOCIO CLAVE:
-    - Si se APRUEBA, la mascota asociada cambia su estado a 'Adoptada'
-      para que deje de mostrarse en el catálogo de adopción disponible.
+    - Si se APRUEBA:
+      1. La mascota asociada cambia su estado a 'Adoptada' en mascotas.txt
+         para que deje de mostrarse en el catálogo de adopción disponible.
+      2. Cualquier otra solicitud PENDIENTE para esta misma mascota se pasa
+         automáticamente a 'Rechazada', porque la mascota ya tiene adoptante
+         y no puede ser entregada a más de una persona.
     - Si se RECHAZA, la mascota se mantiene como 'Disponible'.
     """
     solicitudes = leer_todas_las_solicitudes()
@@ -256,7 +304,15 @@ def cambiar_estado_solicitud(id_solicitud_buscar, nuevo_estado):
             break
 
     if encontrada:
-        # 1. Reescribimos solicitudes.txt con el estado actualizado
+        # Si fue aprobada, rechazamos automáticamente cualquier otra solicitud
+        # que estuviera pendiente para esta misma mascota
+        if nuevo_estado == 'Aprobada' and mascota_id_afectada:
+            for sol in solicitudes:
+                if sol['mascota_id'] == mascota_id_afectada and sol['id_solicitud'] != id_solicitud_buscar:
+                    if sol['estado'] == 'Pendiente':
+                        sol['estado'] = 'Rechazada'
+
+        # 1. Reescribimos solicitudes.txt con los estados actualizados
         with open(RUTA_SOLICITUDES, mode='w', encoding='utf-8', newline='') as archivo:
             escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_SOLICITUDES)
             escritor.writeheader()

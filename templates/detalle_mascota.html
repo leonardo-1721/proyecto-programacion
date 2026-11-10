@@ -30,6 +30,17 @@
     </div>
     {% endif %}
 
+    <!-- ALERTA SI LA MASCOTA YA NO ESTÁ DISPONIBLE -->
+    {% if no_disponible %}
+    <div class="alert alert-warning alert-dismissible fade show border-0 rounded-4 shadow-sm p-4 mb-4" role="alert">
+        <div>
+            <strong class="d-block text-warning-emphasis fs-6 mb-1">Mascota no disponible para adopción</strong>
+            <span class="text-dark small">Esta mascota ya ha sido adoptada o se encuentra bajo tratamiento médico, por lo que no puede recibir nuevas solicitudes.</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    {% endif %}
+
     <!-- Migas de pan del Wireframe: Inicio > Catálogo > [Nombre] -->
     <div class="mockup-breadcrumb mb-4">
         <a href="{% url 'home' %}">Inicio</a>

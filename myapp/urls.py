@@ -38,6 +38,9 @@ urlpatterns = [
     # 7.2 Acción para eliminar permanentemente una mascota del .txt
     path('panel-admin/mascota/<int:id_mascota>/eliminar/', views.eliminar_mascota_view, name='eliminar_mascota'),
 
+    # 7.3 Acción para editar todos los datos de una mascota en el .txt
+    path('panel-admin/mascota/<int:id_mascota>/editar/', views.editar_mascota_view, name='editar_mascota'),
+
     # 8. Formulario para registrar una nueva mascota rescatada (RF1)
     path('panel-admin/registrar-mascota/', views.registrar_mascota_view, name='registrar_mascota'),
 ]

@@ -154,11 +154,13 @@ def detalle_mascota_view(request, id):
     # Leemos si viene algún código de solicitud reciente o alerta de error en la URL
     codigo_tramite = request.GET.get('solicitud_creada', '')
     error_terminos = request.GET.get('error_terminos', '')
+    no_disponible = request.GET.get('no_disponible', '')
 
     return render(request, 'detalle_mascota.html', {
         'mascota': mascota,
         'codigo_tramite': codigo_tramite,
         'error_terminos': error_terminos,
+        'no_disponible': no_disponible,
     })
 
 
@@ -175,6 +177,10 @@ def enviar_solicitud_view(request, id):
     mascota = storage.buscar_mascota_por_id(id)
     if not mascota:
         raise Http404("La mascota seleccionada no existe.")
+
+    # REGLA: Si la mascota ya no está disponible (ej. ya fue adoptada), se rechaza la postulación
+    if mascota.get('estado') != 'Disponible':
+        return redirect(f"/mascota/{mascota['id']}/?no_disponible=1")
 
     if request.method == 'POST':
         # Validación de Términos y Condiciones obligatorios
@@ -217,11 +223,18 @@ def panel_admin_view(request):
     Vista del Administrador:
     - Muestra métricas rápidas (Total solicitudes, pendientes, disponibles, aprobadas).
     - Muestra la tabla completa de solicitudes leídas desde solicitudes.txt.
-    - Permite revisar las respuestas y aprobar o rechazar cada solicitud.
+    - Cruza el estado actual de la mascota para saber si ya fue adoptada.
+    - Permite revisar las respuestas, aprobar, rechazar o eliminar solicitudes.
     """
     solicitudes = storage.leer_todas_las_solicitudes()
     mascotas = storage.leer_todas_las_mascotas()
     solicitud_eliminada = request.GET.get('solicitud_eliminada', '')
+
+    # Cruzamos el estado actual de cada mascota para saber si ya fue adoptada
+    mascotas_dict = {m['id']: m for m in mascotas}
+    for s in solicitudes:
+        m = mascotas_dict.get(s['mascota_id'])
+        s['mascota_estado'] = m['estado'] if m else 'Desconocido'
 
     # Métricas calculadas para las tarjetas superiores del mockup
     total_solicitudes = len(solicitudes)
@@ -287,6 +300,7 @@ def admin_mascotas_view(request):
     mensaje_exito = request.GET.get('guardado', '')
     mascota_eliminada = request.GET.get('mascota_eliminada', '')
     estado_actualizado = request.GET.get('estado_actualizado', '')
+    mascota_editada = request.GET.get('mascota_editada', '')
 
     return render(request, 'admin_mascotas.html', {
         'mascotas': mascotas,
@@ -294,6 +308,7 @@ def admin_mascotas_view(request):
         'mensaje_exito': mensaje_exito,
         'mascota_eliminada': mascota_eliminada,
         'estado_actualizado': estado_actualizado,
+        'mascota_editada': mascota_editada,
     })
 
 
@@ -327,6 +342,54 @@ def eliminar_mascota_view(request, id_mascota):
     """
     eliminada = storage.eliminar_mascota(id_mascota)
     return redirect('/panel-admin/mascotas/?mascota_eliminada=' + ('1' if eliminada else '0'))
+
+
+# ==============================================================================
+# VISTA 7.3: EDITAR MASCOTA REGISTRADA (Actualizar datos en mascotas.txt)
+# ==============================================================================
+@admin_requerido
+def editar_mascota_view(request, id_mascota):
+    """
+    Permite al administrador editar los datos completos de una mascota:
+    - GET: Muestra el formulario con los datos actuales pre-cargados.
+    - POST: Guarda los cambios en data/mascotas.txt y redirige al inventario.
+    """
+    mascota = storage.buscar_mascota_por_id(id_mascota)
+    if not mascota:
+        raise Http404("La mascota no existe.")
+
+    if request.method == 'POST':
+        edad_num = request.POST.get('edad_numero', '').strip()
+        edad_unidad = request.POST.get('edad_unidad', 'años').strip()
+        edad_formateada = f"{edad_num} {edad_unidad}" if edad_num else mascota['edad']
+
+        datos_actualizados = {
+            'nombre': request.POST.get('nombre', mascota['nombre']).strip(),
+            'especie': request.POST.get('especie', mascota['especie']).strip(),
+            'raza': request.POST.get('raza', mascota['raza']).strip(),
+            'edad': edad_formateada,
+            'sexo': request.POST.get('sexo', mascota['sexo']).strip(),
+            'tamano': request.POST.get('tamano', mascota['tamano']).strip(),
+            'peso': request.POST.get('peso', mascota['peso']).strip(),
+            'foto_url': request.POST.get('foto_url', mascota['foto_url']).strip(),
+            'descripcion': request.POST.get('descripcion', mascota['descripcion']).strip(),
+            'vacunado': request.POST.get('vacunado') == 'si',
+            'estado': request.POST.get('estado', mascota['estado']).strip(),
+        }
+
+        storage.actualizar_datos_mascota(id_mascota, datos_actualizados)
+        return redirect('/panel-admin/mascotas/?mascota_editada=1')
+
+    # Para el formulario de edición, parseamos la edad si viene como "X años" o "X meses"
+    edad_partes = mascota['edad'].split()
+    edad_numero = edad_partes[0] if edad_partes and edad_partes[0].isdigit() else '1'
+    edad_unidad = edad_partes[1] if len(edad_partes) > 1 else 'años'
+
+    return render(request, 'admin_editar_mascota.html', {
+        'mascota': mascota,
+        'edad_numero': edad_numero,
+        'edad_unidad': edad_unidad,
+    })
 
 
 # ==============================================================================

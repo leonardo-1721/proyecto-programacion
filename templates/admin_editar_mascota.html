@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar a {{ mascota.nombre }} | Panel Administrativo{% endblock %}
+
+{% block content %}
+<div class="container py-4 py-md-5" style="max-width: 900px;">
+
+    <!-- MENÚ SUPERIOR DEL ADMINISTRADOR (Pestañas de Navegación) -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a href="{% url 'panel_admin' %}" class="btn btn-mockup-light btn-sm">
+            <i class="bi bi-inbox me-1"></i> Solicitudes de Adopción
+        </a>
+        <a href="{% url 'admin_mascotas' %}" class="btn btn-mockup-dark btn-sm">
+            <i class="bi bi-list-task me-1"></i> Mascotas Registradas
+        </a>
+        <a href="{% url 'registrar_mascota' %}" class="btn btn-mockup-light btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> + Registrar Nueva Mascota
+        </a>
+    </div>
+
+    <!-- TARJETA DEL FORMULARIO DE EDICIÓN -->
+    <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+        
+        <!-- ENCABEZADO -->
+        <div class="p-3 px-4 text-white d-flex justify-content-between align-items-center" style="background-color: var(--dark-btn);">
+            <div>
+                <h4 class="fw-bold mb-0" style="font-size: 1.25rem;">
+                    <i class="bi bi-pencil-square me-2"></i> Editar Mascota: {{ mascota.nombre }}
+                </h4>
+                <span class="small text-white-50">Identificador en inventario: #M-10{{ mascota.id }}</span>
+            </div>
+            <a href="{% url 'admin_mascotas' %}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                <i class="bi bi-x-lg me-1"></i> Cancelar
+            </a>
+        </div>
+
+        <div class="p-4 p-md-5">
+            <form method="POST" action="{% url 'editar_mascota' mascota.id %}">
+                {% csrf_token %}
+
+                <!-- 1. Nombre de la Mascota -->
+                <div class="mb-4">
+                    <label class="form-label small text-muted fw-bold text-uppercase">Nombre de la mascota *</label>
+                    <input type="text" name="nombre" class="form-control rounded-pill px-4 py-2" value="{{ mascota.nombre }}" required>
+                </div>
+
+                <!-- 2. Especie y Sexo -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Especie *</label>
+                        <select name="especie" class="form-select mockup-select w-100" required>
+                            <option value="Perro" {% if mascota.especie == 'Perro' %}selected{% endif %}>Perro</option>
+                            <option value="Gato" {% if mascota.especie == 'Gato' %}selected{% endif %}>Gato</option>
+                            <option value="Otro" {% if mascota.especie == 'Otro' %}selected{% endif %}>Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Sexo *</label>
+                        <select name="sexo" class="form-select mockup-select w-100" required>
+                            <option value="Hembra" {% if mascota.sexo == 'Hembra' %}selected{% endif %}>Hembra</option>
+                            <option value="Macho" {% if mascota.sexo == 'Macho' %}selected{% endif %}>Macho</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 3. Edad y Estado Actual -->
+                <div class="row g-3 mb-4">
+                    <!-- Edad (Número + Unidad) -->
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Edad *</label>
+                        <div class="input-group">
+                            <input type="number" name="edad_numero" class="form-control rounded-start-pill px-3" value="{{ edad_numero }}" min="1" max="25" required>
+                            <select name="edad_unidad" class="form-select rounded-end-pill mockup-select" style="max-width: 130px;">
+                                <option value="años" {% if edad_unidad == 'años' %}selected{% endif %}>Años</option>
+                                <option value="meses" {% if edad_unidad == 'meses' %}selected{% endif %}>Meses</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="col-md-6">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Estado actual *</label>
+                        <select name="estado" class="form-select mockup-select w-100" required>
+                            <option value="Disponible" {% if mascota.estado == 'Disponible' %}selected{% endif %}>Disponible (Visible en catálogo)</option>
+                            <option value="En Tratamiento" {% if mascota.estado == 'En Tratamiento' %}selected{% endif %}>En Tratamiento (Médico / Cuarentena)</option>
+                            <option value="Adoptada" {% if mascota.estado == 'Adoptada' %}selected{% endif %}>Adoptada (Finalizada)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 4. Raza, Tamaño y Peso -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Raza</label>
+                        <input type="text" name="raza" class="form-control rounded-pill px-3 py-2" value="{{ mascota.raza }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Tamaño</label>
+                        <select name="tamano" class="form-select mockup-select w-100">
+                            <option value="Pequeño" {% if mascota.tamano == 'Pequeño' %}selected{% endif %}>Pequeño</option>
+                            <option value="Mediano" {% if mascota.tamano == 'Mediano' %}selected{% endif %}>Mediano</option>
+                            <option value="Grande" {% if mascota.tamano == 'Grande' %}selected{% endif %}>Grande</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-bold text-uppercase">Peso estimado</label>
+                        <input type="text" name="peso" class="form-control rounded-pill px-3 py-2" value="{{ mascota.peso }}">
+                    </div>
+                </div>
+
+                <!-- 5. URL de Fotografía -->
+                <div class="mb-4">
+                    <label class="form-label small text-muted fw-bold text-uppercase">URL de la Foto</label>
+                    <input type="url" name="foto_url" class="form-control rounded-pill px-4 py-2" value="{{ mascota.foto_url }}">
+                    <span class="small text-muted d-block mt-1 ps-2">Enlace web directo a la imagen.</span>
+                </div>
+
+                <!-- 6. Vacunación -->
+                <div class="mb-4">
+                    <label class="form-label small text-muted fw-bold text-uppercase d-block mb-2">Estado de Vacunación</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="vacunado" id="vacunaSi" value="si" {% if mascota.vacunado %}checked{% endif %}>
+                        <label class="form-check-label text-dark" for="vacunaSi">Esquema al día</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="vacunado" id="vacunaNo" value="no" {% if not mascota.vacunado %}checked{% endif %}>
+                        <label class="form-check-label text-dark" for="vacunaNo">Pendiente por vacunar</label>
+                    </div>
+                </div>
+
+                <!-- 7. Historia y Descripción -->
+                <div class="mb-5">
+                    <label class="form-label small text-muted fw-bold text-uppercase">Historia y Personalidad</label>
+                    <textarea name="descripcion" rows="4" class="form-control rounded-4 p-3" placeholder="Describe el temperamento de la mascota...">{{ mascota.descripcion }}</textarea>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-flex flex-wrap gap-3 pt-3 border-top">
+                    <button type="submit" class="btn btn-mockup-dark px-4 py-2 rounded-pill shadow-sm">
+                        <i class="bi bi-floppy me-1"></i> Guardar Cambios
+                    </button>
+                    <a href="{% url 'admin_mascotas' %}" class="btn btn-mockup-light px-4 py-2 rounded-pill">
+                        Cancelar
+                    </a>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
