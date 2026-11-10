@@ -77,13 +77,21 @@ def buscar_mascota_por_id(id_buscado):
 def actualizar_estado_mascota(id_mascota, nuevo_estado):
     """
     Actualiza el estado de una mascota (ej: de 'Disponible' a 'Adoptada')
-    y vuelve a escribir todo el archivo mascotas.txt con los cambios.
+    y vuelve a escribir todo el archivo data/mascotas.txt con los cambios.
+    REGLA DE SINCRONIZACIÓN BIDIRECCIONAL:
+    - Si la mascota deja de estar 'Adoptada' (pasa a 'Disponible' o 'En Tratamiento'):
+      Cualquier solicitud de esa mascota que estuviese 'Aprobada' en data/solicitudes.txt
+      se pasa automáticamente a 'Rechazada', porque la adopción ha quedado sin efecto,
+      liberando a la mascota para ser postulada o adoptada nuevamente.
     """
     mascotas = leer_todas_las_mascotas()
     modificado = False
+    estado_anterior = None
+    id_num = int(id_mascota)
 
     for m in mascotas:
-        if m['id'] == int(id_mascota):
+        if m['id'] == id_num:
+            estado_anterior = m['estado']
             m['estado'] = nuevo_estado
             modificado = True
             break
@@ -94,6 +102,23 @@ def actualizar_estado_mascota(id_mascota, nuevo_estado):
             escritor.writeheader()
             for m in mascotas:
                 escritor.writerow(m)
+
+        # Si dejó de estar Adoptada, sincronizamos solicitudes.txt
+        if estado_anterior == 'Adoptada' and nuevo_estado != 'Adoptada':
+            solicitudes = leer_todas_las_solicitudes()
+            hubo_cambio_sol = False
+            for sol in solicitudes:
+                if str(sol['mascota_id']) == str(id_num) and sol['estado'] == 'Aprobada':
+                    sol['estado'] = 'Rechazada'
+                    hubo_cambio_sol = True
+
+            if hubo_cambio_sol:
+                with open(RUTA_SOLICITUDES, mode='w', encoding='utf-8', newline='') as archivo:
+                    escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_SOLICITUDES)
+                    escritor.writeheader()
+                    for sol in solicitudes:
+                        escritor.writerow(sol)
+
     return modificado
 
 
@@ -101,14 +126,27 @@ def actualizar_datos_mascota(id_mascota, datos):
     """
     Actualiza todos los datos de una mascota existente (nombre, especie, raza, edad, sexo,
     tamaño, peso, foto, descripción, vacunación, estado) y reescribe data/mascotas.txt.
+    REGLA DE SINCRONIZACIÓN BIDIRECCIONAL:
+    1. Si se modifica el nombre de la mascota, se actualiza 'mascota_nombre' en todas
+       las filas correspondientes de data/solicitudes.txt.
+    2. Si el estado de la mascota deja de ser 'Adoptada', las solicitudes 'Aprobadas'
+       para esta mascota pasan automáticamente a 'Rechazada'.
     """
     mascotas = leer_todas_las_mascotas()
     modificado = False
+    estado_anterior = None
+    nombre_anterior = None
+    nuevo_nombre = None
+    nuevo_estado = None
+    id_num = int(id_mascota)
 
     for m in mascotas:
-        if m['id'] == int(id_mascota):
+        if m['id'] == id_num:
+            estado_anterior = m['estado']
+            nombre_anterior = m['nombre']
             if datos.get('nombre'):
                 m['nombre'] = datos['nombre'].strip()
+                nuevo_nombre = m['nombre']
             if datos.get('especie'):
                 m['especie'] = datos['especie'].strip()
             if datos.get('raza'):
@@ -129,6 +167,7 @@ def actualizar_datos_mascota(id_mascota, datos):
                 m['vacunado'] = bool(datos['vacunado'])
             if datos.get('estado'):
                 m['estado'] = datos['estado'].strip()
+                nuevo_estado = m['estado']
             modificado = True
             break
 
@@ -138,6 +177,30 @@ def actualizar_datos_mascota(id_mascota, datos):
             escritor.writeheader()
             for m in mascotas:
                 escritor.writerow(m)
+
+        # Sincronización con data/solicitudes.txt
+        solicitudes = leer_todas_las_solicitudes()
+        hubo_cambio_sol = False
+
+        for sol in solicitudes:
+            if str(sol['mascota_id']) == str(id_num):
+                # 1. Si cambió el nombre de la mascota, actualizarlo en las solicitudes
+                if nuevo_nombre and nuevo_nombre != nombre_anterior:
+                    sol['mascota_nombre'] = nuevo_nombre
+                    hubo_cambio_sol = True
+                # 2. Si dejó de estar Adoptada, revocar la aprobación
+                if estado_anterior == 'Adoptada' and nuevo_estado and nuevo_estado != 'Adoptada':
+                    if sol['estado'] == 'Aprobada':
+                        sol['estado'] = 'Rechazada'
+                        hubo_cambio_sol = True
+
+        if hubo_cambio_sol:
+            with open(RUTA_SOLICITUDES, mode='w', encoding='utf-8', newline='') as archivo:
+                escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_SOLICITUDES)
+                escritor.writeheader()
+                for sol in solicitudes:
+                    escritor.writerow(sol)
+
     return modificado
 
 
@@ -145,11 +208,14 @@ def eliminar_mascota(id_mascota):
     """
     Elimina físicamente una mascota del archivo data/mascotas.txt.
     Filtra la lista en memoria y reescribe el archivo completo sin esa fila.
+    Si la mascota eliminada tenía solicitudes Aprobadas o Pendientes, se pasan a 'Rechazada'
+    en data/solicitudes.txt para evitar solicitudes huérfanas de una mascota eliminada.
     Retorna True si fue eliminada exitosamente, False si no existía.
     """
     mascotas = leer_todas_las_mascotas()
     inicial = len(mascotas)
-    mascotas_filtradas = [m for m in mascotas if m['id'] != int(id_mascota)]
+    id_num = int(id_mascota)
+    mascotas_filtradas = [m for m in mascotas if m['id'] != id_num]
 
     if len(mascotas_filtradas) < inicial:
         with open(RUTA_MASCOTAS, mode='w', encoding='utf-8', newline='') as archivo:
@@ -157,7 +223,24 @@ def eliminar_mascota(id_mascota):
             escritor.writeheader()
             for m in mascotas_filtradas:
                 escritor.writerow(m)
+
+        # Sincronización en solicitudes.txt para no dejar solicitudes activas huérfanas
+        solicitudes = leer_todas_las_solicitudes()
+        hubo_cambio = False
+        for sol in solicitudes:
+            if str(sol['mascota_id']) == str(id_num) and sol['estado'] in ('Aprobada', 'Pendiente'):
+                sol['estado'] = 'Rechazada'
+                hubo_cambio = True
+
+        if hubo_cambio:
+            with open(RUTA_SOLICITUDES, mode='w', encoding='utf-8', newline='') as archivo:
+                escritor = csv.DictWriter(archivo, fieldnames=COLUMNAS_SOLICITUDES)
+                escritor.writeheader()
+                for sol in solicitudes:
+                    escritor.writerow(sol)
+
         return True
+
     return False
 
 
